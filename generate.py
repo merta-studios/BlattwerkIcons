@@ -122,37 +122,53 @@ def icon(k):
 # Aktionsicons (Bearbeiten, Ebenen, Umwandeln) stehen gerade — sie sind
 # Bedienelemente, keine Handgeräte. Handgeräte würden +38° gekippt (STILGUIDE).
 def bicon(k):
-    if k=='groesse-aendern':  # vier Eckgriffe in vier Grüntönen, vom Quadrat verbunden
-        return (r(12.5,12.5,39,39,4.5,'none','I',2.2)
-                +r(7,7,11,11,3.2,'B')+r(46,7,11,11,3.2,'A')
-                +r(46,46,11,11,3.2,'M')+r(7,46,11,11,3.2,'L'))
-    if k=='ausschneiden':  # Schere: Stahlklingen (L) kreuzen am Niet, Griffe (B) mit Ösen
-        kling=lambda x,y: p(f'M32 30 {x} {y}','none','I',6.4)+p(f'M32 30 {x} {y}','none','L',2.8)
-        griff=lambda x,y: p(f'M32 30 {x} {y}','none','I',6.4)+p(f'M32 30 {x} {y}','none','B',2.8)
-        oese=lambda x: c(x,46,7.5,'none','I',6.4)+c(x,46,7.5,'none','B',2.8)
-        return (kling(20,11)+griff(37.2,38.6)+oese(42)
-                +kling(44,11)+griff(26.8,38.6)+oese(22)+c(32,30,2.9,'A','I',1.7))
-    if k=='duplizieren':  # zwei gleiche Objekte, diagonal versetzt
-        return r(22,9,33,33,6,'L')+r(9,22,33,33,6,'B')+line('M16 31h13','H',2.6)
-    if k=='loeschen':  # Mülltonne — Palette »rot« (*S)
-        return (r(26,8,12,6.5,2.6,'B','I',2.4)+r(11,14.5,42,6.5,2.6,'B')
-                +p('M16 23h32l-2.6 31.4q-.2 3-3.4 3H22q-3.2 0-3.4-3Z','L')
-                +line('M25 30v21m7-21v21m7-21v21','D',2.4))
-    if k=='kopieren':  # zwei Blätter mit Eselsohr, diagonal versetzt
-        return (p('M28 6h16l10 10v26q0 4-4 4H28q-4 0-4-4V10q0-4 4-4Z','M')+p('M44 6v10h10Z','L','I',2)
-                +p('M14 18h16l10 10v26q0 4-4 4H14q-4 0-4-4V22q0-4 4-4Z','L')+p('M30 18v10h10Z','B','I',2)
-                +line('M16 34h18m-18 7h13','D',2.2))
-    if k=='einfuegen':  # Klemmbrett mit Blatt
-        return (r(11,10,42,46,5,'B')+r(17,20,30,30,3,'L','I',2.2)
-                +line('M22 28h20m-20 7h14','D',2.3)
-                +r(24,5,16,10,3,'A','I',2.4)+c(32,10,1.8,'I','none'))
-    if k=='farbe-aendern':  # Fächer mit vier Grüntönen auf einem Niet
-        blatt=lambda a,f: group(r(25.5,10,13,42,6.5,f,'I',2.4),f'rotate({a} 32 52)')
-        return blatt(-24,'L')+blatt(-8,'A')+blatt(8,'B')+blatt(24,'M')+c(32,52,3.4,'H','I',2.2)
-    if k=='bild-zuschneiden':  # zwei ineinandergreifende Winkel mit Überstand + Bild im Ausschnitt
-        winkel='M14 12h40q2 0 2 2v4q0 2-2 2H20v34q0 2-2 2h-4q-2 0-2-2V14q0-2 2-2Z'
-        return (group(p(winkel,'L'),'rotate(180 32 32)')+p(winkel,'B')
-                +p('M24 41l5-8 4 5 4-4 4 7Z','M','none')+c(28,27,2.6,'A','none'))
+    if k=='groesse-aendern':
+        return (r(13,13,38,38,3,'L','I',2.2)
+                +line('M21 19h20','M',2)+line('M21 45h13','M',2)
+                +r(8,8,10,10,2.5,'B')+r(46,8,10,10,2.5,'A')
+                +r(8,46,10,10,2.5,'L')+r(46,46,10,10,2.5,'M')
+                +line('M10.5 11h4','H',1.8))
+    if k=='ausschneiden':
+        return (p('M30 32 15 8q-1-2 2-1 10 4 17 20Z','L')
+                +line('M20 13 31 29','M',1.8)
+                +p('M34 32 49 8q1-2-2-1-10 4-17 20Z','L')
+                +line('M44 13 33 29','M',1.8)
+                +p('M30 30q-3 4-6 8l4 3 6-8Z','M')
+                +p('M34 30q3 4 6 8l-4 3-6-8Z','B')
+                +c(22,46,8,'B')+c(22,46,4,'L','I',1.8)
+                +c(42,46,8,'B')+c(42,46,4,'L','I',1.8)
+                +c(32,30,2.8,'A','I',1.7)+line('M17 43q1-2 3-3','H',1.8))
+    if k=='duplizieren':
+        return (group(r(19,9,34,37,4,'M'),'rotate(7 36 27)')
+                +r(10,18,34,37,4,'L')+r(15,23,24,10,2,'B','I',1.8)
+                +line('M16 41h20m-20 6h14','D',2.2)+line('M18 26h10','H',1.8))
+    if k=='loeschen':
+        return (p('M26 15v-3q0-4 4-4h4q4 0 4 4v3','none','I',2.6)
+                +p('M16 22h32l-3 30q-.4 4-4 4H23q-3.6 0-4-4Z','B')
+                +p('M20 25h24l-2 25q-.2 2-2 2H24q-2 0-2-2Z','L','I',1.8)
+                +line('M27 30v16m5-16v16m5-16v16','D',2.1)
+                +r(11,15,42,7,3,'M')+line('M16 17.5h12','H',2))
+    if k=='kopieren':
+        return (p('M28 7h16l10 10v26q0 4-4 4H28q-4 0-4-4V11q0-4 4-4Z','M')
+                +p('M44 7v10h10Z','B','I',2)
+                +p('M14 17h16l10 10v26q0 4-4 4H14q-4 0-4-4V21q0-4 4-4Z','L')
+                +p('M30 17v10h10Z','B','I',2)
+                +line('M16 33h18m-18 7h16m-16 7h10','D',2.2))
+    if k=='einfuegen':
+        return (r(10,10,44,46,5,'M')+r(15,15,34,36,3,'L')
+                +line('M21 28h22m-22 7h18m-18 7h12','D',2.2)
+                +p('M23 12q0-3 3-3h2q0-4 4-4t4 4h2q3 0 3 3v6H23Z','B')
+                +c(32,10,1.5,'F','none')+line('M26 14h5','H',1.8))
+    if k=='farbe-aendern':
+        blatt=lambda a,f: group(r(25.5,10,13,42,5,f,'I',2.4),f'rotate({a} 32 52)')
+        return (blatt(-24,'L')+blatt(-8,'A')+blatt(8,'B')+blatt(24,'M')
+                +line('M41 16l-2 8','H',2)+c(32,52,3.4,'L','I',2.2))
+    if k=='bild-zuschneiden':
+        return (r(14,14,36,36,3,'L')+c(40,23,3,'A','I',1.6)
+                +p('M18 44 27 31l7 8 4-4 8 9Z','B','I',1.8)
+                +p('M11 9h7v36h37v7H15q-4 0-4-4Z','M')
+                +p('M9 12h36q4 0 4 4v39h-7V19H9Z','B')
+                +line('M12 15h12','H',2))
     if k in ('ebene-nach-vorne','ebene-nach-hinten'):
         hell=r(9,9,34,34,6,'L'); gruen=r(21,21,34,34,6,'B')
         auf=p('M38 29.5 47 39.5h-4.5v8h-9v-8H29Z','H','none')    # Pfeil im vorderen Grün
