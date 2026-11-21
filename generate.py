@@ -2,7 +2,7 @@
 """Blattwerk · reproduzierbarer SVG/PNG/Asset-Export für `Normal/` und `Beta/`.
 
 Aufruf:  python generate.py             beide Bereiche neu erzeugen
-         python generate.py normal      nur Normal/ (G01…G07)
+         python generate.py normal      nur Normal/ (G01…G11)
          python generate.py beta        nur Beta/   (B01…B04)
 
 Regeln:  AGENTS.md    → Stern-Codes (*1 *2 *3 *S), Beta-Policy, Freigabe
@@ -13,7 +13,7 @@ Alles wird aus diesem Skript erzeugt; `SVG/`, `PNG/`, `*.xcassets/` und
 Gruppentabellen stehen, werden beim Lauf entfernt (prune).
 """
 from pathlib import Path
-import base64, html, io, json, shutil, sys
+import base64, html, io, json, math, shutil, sys
 
 from PIL import Image
 
@@ -77,7 +77,7 @@ def line(d, s='I', w=2): return p(d, 'none', s, w)
 def group(content, t): return f'<g transform="{t}">{content}</g>'
 def tilt(z, a=38): return group(z, f'rotate({a} 32 32)')
 
-# ── Normal: freigegebene Motive (G01…G07) ───────────────────────────────────
+# ── Normal: freigegebene Motive (G01…G11; G08–G11 aus Beta übernommen) ──────────────────────────────────
 def nibpen(): return tilt(r(26,5,12,31,4,'B')+r(26,10,12,5,1,'A','I',1.8)+line('M29 19v12','H')+p('M26 35h12l3 8-9 16-9-16Z','L')+line('M32 56V46')+c(32,44,2,'I','none'))
 def standard(): return tilt(r(18,17,28,33,5,'B')+p('M18 34h28v11q0 5-5 5H23q-5 0-5-5Z','L')+line('M23 23h12','H',2.6)+line('M22 39h20','M'),42)
 def shapes(): return r(8,12,27,29,5,'B')+p('m40 9 15 26H25Z','A')+c(38,43,13,'L')+line('M30 43q0-6 6-8','M')
@@ -116,12 +116,6 @@ def icon(k):
         return a if k=='rueckgaengig' else group(a,'translate(64 0) scale(-1 1)')
     if k=='haus': return p('M7 30 30 10q2-2 4 0l23 20q2 2 0 4l-2 2q-1 1-3 0l-3-3v19q0 3-3 3h-9V39H27v16h-9q-3 0-3-3V33l-3 3q-2 1-3 0l-2-2q-2-2 0-4Z','I','none')
     if k=='schliessen': return line('m17 17 30 30m0-30L17 47','I',7)
-    raise KeyError(k)
-
-# ── Beta: neue Motive (B01…B04) ─────────────────────────────────────────────
-# Aktionsicons (Bearbeiten, Ebenen, Umwandeln) stehen gerade — sie sind
-# Bedienelemente, keine Handgeräte. Handgeräte würden +38° gekippt (STILGUIDE).
-def bicon(k):
     if k=='groesse-aendern':
         return (r(13,13,38,38,3,'L','I',2.2)
                 +line('M21 19h20','M',2)+line('M21 45h13','M',2)
@@ -209,6 +203,121 @@ def bicon(k):
                 +line('M28 34q0-3 3-4','H',2)+c(48,24,2.5,'A','I',1.7))
     raise KeyError(k)
 
+# ── Geometrie-Helfer für Beta (Bögen, Pfeilspitzen, Sterne, Zahnrad) ───────
+def _pt(cx, cy, R, a):
+    t = math.radians(a); return cx + R*math.cos(t), cy + R*math.sin(t)
+def arc(cx, cy, R, a0, a1):
+    """Kreisbogen von a0 nach a1 (Grad, Bildschirmkoordinaten: 90 = unten)."""
+    x0, y0 = _pt(cx, cy, R, a0); x1, y1 = _pt(cx, cy, R, a1)
+    large = 1 if abs(a1 - a0) > 180 else 0
+    sweep = 1 if a1 > a0 else 0
+    return f'M{x0:.2f} {y0:.2f}A{R} {R} 0 {large} {sweep} {x1:.2f} {y1:.2f}'
+def head(cx, cy, R, a1, ccw=False, s=4.2):
+    """Pfeilspitze am Bogenende a1; Laufrichtung = Bogenrichtung an dieser Stelle."""
+    px, py = _pt(cx, cy, R, a1); t = math.radians(a1)
+    dx, dy = -math.sin(t), math.cos(t)
+    if ccw: dx, dy = -dx, -dy
+    bx, by = -dx, -dy
+    def wing(ang):
+        c_, s_ = math.cos(ang), math.sin(ang)
+        return px + s*(bx*c_ - by*s_), py + s*(bx*s_ + by*c_)
+    (x1, y1), (x2, y2) = wing(math.radians(40)), wing(math.radians(-40))
+    return f'M{x1:.2f} {y1:.2f}L{px:.2f} {py:.2f}L{x2:.2f} {y2:.2f}'
+def star_d(cx, cy, R, ri):
+    pts = []
+    for i in range(10):
+        a = math.radians(-90 + i*36); rad = R if i % 2 == 0 else ri
+        pts.append(f'{cx+rad*math.cos(a):.2f} {cy+rad*math.sin(a):.2f}')
+    return 'M' + 'L'.join(pts) + 'Z'
+def gear_d(cx, cy, ro, ri, n=8):
+    pts = []
+    for i in range(n):
+        t = i*360/n
+        for ang, rad in [(t-17, ri), (t-10, ro), (t+10, ro), (t+17, ri)]:
+            a = math.radians(ang); pts.append(f'{cx+rad*math.cos(a):.2f} {cy+rad*math.sin(a):.2f}')
+    return 'M' + 'L'.join(pts) + 'Z'
+def rotbadge(a0, a1):
+    """Badge unten rechts mit Drehpfeil (Bogen R=6 um (46,46))."""
+    return (c(46, 46, 11, 'B') + line(arc(46, 46, 6, a0, a1), 'H', 2.4)
+            + p(head(46, 46, 6, a1, a1 < a0), 'none', 'H', 2.4))
+def seitenleiste_links():
+    return (r(8, 12, 48, 40, 6, 'L') + p('M14 12h11v40H14q-6 0-6-6V18q0-6 6-6Z', 'B')
+            + line('M30 22h18m-18 7h14m-14 7h12', 'D', 2.1))
+def seite_drehen():
+    return page() + rotbadge(210, 330)
+
+# ── Beta: neue Motive (B01…B04) ─────────────────────────────────────────────
+# Gleiche Regeln wie Normal: Handgeräte (Lineal) +38° gekippt, Bedienelemente gerade.
+def bicon(k):
+    if k == 'lineal':
+        ticks = ''.join(line(f'M28 {y}h{w}', 'D', 1.8) for y, w in [(13, 6), (21, 9), (29, 6), (37, 9), (45, 6), (53, 9)])
+        return tilt(r(22, 5, 20, 54, 3, 'B') + line('M25 10v44', 'H', 2) + ticks)
+    if k == 'zoom-ansicht':
+        return (line('M42 42 53 53', 'I', 12) + line('M42 42 53 53', 'B', 7)
+                + c(27, 27, 17, 'L') + line('M27 18v18m-9-9h18', 'I', 3)
+                + line('M18 25q1-5 6-6', 'H', 2))
+    if k == 'stoppuhr':
+        return (r(27, 5, 10, 6, 2.5, 'A') + r(29, 9, 6, 8, 1, 'B')
+                + c(32, 36, 18, 'B') + c(32, 36, 12, 'L', 'I', 2)
+                + line('M32 36V27', 'I', 2.6) + line('M32 36l5 4', 'I', 2.6)
+                + c(32, 36, 2, 'I', 'none')
+                + group(r(46, 14, 7, 5, 1.5, 'M'), 'rotate(45 32 36)'))
+    if k == 'scrollrichtung-vertikal':
+        return (r(10, 6, 44, 52, 7, 'L') + line('M32 18v28', 'I', 3)
+                + p('M32 8l8 10H24Z', 'B', 'I', 2) + p('M32 56l8-10H24Z', 'B', 'I', 2))
+    if k == 'scrollrichtung-horizontal':
+        return (r(6, 10, 52, 44, 7, 'L') + line('M18 32h28', 'I', 3)
+                + p('M8 32l10-8v16Z', 'B', 'I', 2) + p('M56 32l-10-8v16Z', 'B', 'I', 2))
+    if k == 'seitenleiste-links':
+        return seitenleiste_links()
+    if k == 'seitenleiste-rechts':
+        return group(seitenleiste_links(), 'translate(64 0) scale(-1 1)')
+    if k == 'seite-drehen' or k == 'seite-nach-rechts-drehen':
+        return seite_drehen()
+    if k == 'seite-nach-links-drehen':
+        return page() + rotbadge(330, 210)
+    if k == 'seite-180-drehen':
+        return page() + rotbadge(180, 360)
+    if k == 'gehe-zu-seite':
+        return (page() + line('M20 23h12m-12 7h14', 'D')
+                + c(46, 46, 11, 'B') + line('M40 46h11', 'H', 2.6) + p('M46 40l6 6-6 6', 'none', 'H', 2.6))
+    if k == 'seite-leeren':
+        return (page() + line('M20 22h22m-22 7h16', 'D', 2)
+                + group(r(24, 38, 24, 12, 3, 'A'), 'rotate(-30 36 44)'))
+    if k == 'gliederung':
+        return (page()
+                + c(20, 22, 2.6, 'A', 'I', 1.8) + line('M27 22h14', 'D', 2.2)
+                + c(25, 31, 2.2, 'B', 'I', 1.6) + line('M31 31h10', 'D', 2.2)
+                + c(25, 40, 2.2, 'B', 'I', 1.6) + line('M31 40h10', 'D', 2.2)
+                + c(20, 49, 2.6, 'A', 'I', 1.8) + line('M27 49h8', 'D', 2.2))
+    if k == 'favorit':
+        return p(star_d(32, 34, 25, 11), 'B') + line('M24 28l-2 3', 'H', 2.2)
+    if k == 'lesezeichen':
+        return p('M19 8h26q3 0 3 3v46l-16-11-16 11V11q0-3 3-3Z', 'B') + line('M25 15v26', 'H', 2.4)
+    if k == 'vorlage-wechseln':
+        return (p('M32 9C18 9 8 19 8 32c0 11 8 19 18 19 4 0 5-2 4-5s1-5 5-5h5c6 0 10-4 10-9C50 22 42 9 32 9Z', 'L')
+                + c(21, 25, 4, 'B', 'I', 1.8) + c(32, 19, 4, 'A', 'I', 1.8) + c(43, 25, 4, 'M', 'I', 1.8)
+                + c(20, 39, 4, 'D', 'I', 1.8) + c(38, 44, 3.6, 'none', 'I', 1.8))
+    if k == 'bestimmte-objekte-loeschen':
+        return (p('M8 8h32v32H8Z', 'none', 'I', 2.2, 'stroke-dasharray="4 4"')
+                + r(13, 13, 14, 14, 3, 'B') + c(33, 29, 5.5, 'A')
+                + c(46, 46, 11, 'B') + line('M40 46h12', 'H', 3))
+    if k == 'einstellungen':
+        return p(gear_d(32, 32, 26, 20), 'B') + c(32, 32, 9, 'L', 'I', 2.2)
+    if k == 'alles-exportieren':
+        return (p('M9 34h14l4 6h14l4-6h14v14q0 4-4 4H13q-4 0-4-4Z', 'B')
+                + line('M32 40V8', 'I', 3) + p('M23 17l9-9 9 9', 'none', 'I', 3)
+                + line('M14 46h36', 'H', 2))
+    if k == 'seite-exportieren':
+        return (page() + c(46, 46, 11, 'B') + line('M46 52V41', 'H', 2.8)
+                + p('M40.5 46.5 46 41l5.5 5.5', 'none', 'H', 2.8))
+    if k == 'pdf':
+        return (page() + r(12, 27, 40, 16, 3, 'B', 'I', 2.2)
+                + line('M17 39V31h4.2a3.6 3.6 0 0 1 0 7.2H17', 'L', 2.4)
+                + line('M25 31h4a4 4 0 0 1 0 8h-4Z', 'L', 2.4)
+                + line('M36 39V31h8M36 35h6', 'L', 2.4))
+    raise KeyError(k)
+
 # ── Gruppentabellen: (Gruppe, [(slug, Anzeigename, Palette, Stern-Code)]) ───
 GROUPS = [
  ('Werkzeugleiste', [('stift','Stift','fern','23'),('freihandlasso','Freihandlasso','fern','23'),('boxlasso','Boxlasso','sea','23'),('radiergummi','Radiergummi','coral','23'),('textfeld','Textfeld','fern','23'),('formen','Formen','iris','23'),('sticker','Objekte · Sticker','honey','23'),('bilder','Bilder','cobalt','23'),('notizzettel','Notizzettel','honey','23'),('laserpointer','Laserpointer','ember','23')]),
@@ -218,13 +327,18 @@ GROUPS = [
  ('Radierer', [('praezisionsradierer','Präzisionsradierer','sea','3'),('standardradierer','Standardradierer','coral','3'),('strichradierer','Strichradierer','iris','3')]),
  ('Verlauf', [('rueckgaengig','Rückgängig','fern','2'),('vorgaengig','Vorgängig','fern','2')]),
  ('App-Navigation', [('haus','Haus · Startseite','fern','2'),('schliessen','Kreuz · Schließen','fern','2')]),
-]
-BETA_GROUPS = [
  ('Bearbeiten', [('groesse-aendern','Größe ändern','fern','1'),('ausschneiden','Ausschneiden','fern','1'),('duplizieren','Duplizieren','fern','1'),('loeschen','Löschen','rot','S'),('kopieren','Kopieren','fern','1'),('einfuegen','Einfügen','fern','1'),('farbe-aendern','Farbe ändern','fern','1'),('bild-zuschneiden','Bild zuschneiden','fern','1')]),
  ('Ebenen', [('ebene-nach-vorne','Ebene nach vorne','fern','1'),('ebene-nach-hinten','Ebene nach hinten','fern','1')]),
  ('Umwandeln', [('umwandeln','Umwandeln','fern','1'),('umwandeln-in-text','In Text umwandeln','fern','1'),('umwandeln-in-mathe','In Mathe umwandeln','fern','1')]),
  ('Objekte & Aufnahme', [('objekt-erstellen','Objekt erstellen','fern','1'),('bildschirmfoto','Bildschirmfoto','fern','1')]),
 ]
+BETA_GROUPS = [
+ ('Ansicht & Werkzeuge', [('lineal','Lineal','honey','23'),('zoom-ansicht','Zoom Ansicht','cobalt','23'),('stoppuhr','Stoppuhr','ember','23'),('scrollrichtung-vertikal','Scrollrichtung vertikal','fern','1'),('scrollrichtung-horizontal','Scrollrichtung horizontal','fern','1'),('seitenleiste-links','Seitenleiste links','fern','1'),('seitenleiste-rechts','Seitenleiste rechts','fern','1')]),
+ ('Seiten', [('seite-drehen','Seite drehen','fern','1'),('seite-nach-rechts-drehen','Seite nach rechts drehen','fern','1'),('seite-nach-links-drehen','Seite nach links drehen','fern','1'),('seite-180-drehen','180 Grad drehen','fern','1'),('gehe-zu-seite','Gehe zu Seite','fern','1'),('seite-leeren','Seite leeren','rot','S'),('gliederung','Gliederung','fern','1')]),
+ ('Organisation', [('favorit','Favorit','fern','1'),('lesezeichen','Lesezeichen','fern','1'),('vorlage-wechseln','Vorlage wechseln (Farbpalette)','fern','1'),('bestimmte-objekte-loeschen','Bestimmte Objekte löschen','fern','1')]),
+ ('Einstellungen & Export', [('einstellungen','Einstellungen (Zahnrad)','fern','12'),('alles-exportieren','Alles exportieren','fern','1'),('seite-exportieren','Seite exportieren','fern','1'),('pdf','PDF','fern','12')]),
+]
+
 AREAS = {
  'Normal': dict(tag='G', groups=GROUPS, glyph=icon, cat='Blattwerk.xcassets',
                 hinweis='Freigegeben'),

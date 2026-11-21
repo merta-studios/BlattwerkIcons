@@ -5,7 +5,7 @@ skriptbasiert erzeugt (kein generatives Bildmaterial), in zwei Bereichen organis
 
 | Ordner | Inhalt |
 |---|---|
-| [`Normal/`](Normal/) | freigegebene Motive, Gruppen G01–G07 — der Stand für die App |
+| [`Normal/`](Normal/) | freigegebene Motive, Gruppen G01–G11 — der Stand für die App |
 | [`Beta/`](Beta/) | neue Motive in Arbeit, Gruppen B01–… — **nicht freigegeben** |
 | [`STILGUIDE.md`](STILGUIDE.md) | visuelle Grammatik: Raster, Konturen, Paletten, Abnahme |
 | [`AGENTS.md`](AGENTS.md) | Arbeitsregeln: Stern-Codes (`*1 *2 *3 *S`), Beta-Policy, Freigabe-Ablauf |
