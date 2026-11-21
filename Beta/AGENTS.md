@@ -9,3 +9,5 @@ Alles in diesem Ordner ist **Beta**: neue Motive, die noch keine Freigabe haben.
 - Nichts hier ist stabil: Slugs, Gruppen, Varianten und Dateien dürfen sich jederzeit ändern.
 - `Blattwerk-Beta.xcassets` dient nur Vorschau/Test, nicht dem App-Target.
 - Erzeugt wird alles über `python generate.py beta` im Wurzelordner des Repos.
+- Aktuelles Redesign-Briefing (Stil exakt auf `Normal/`-Niveau heben):
+  [`../REDESIGN-PROMPT.md`](../REDESIGN-PROMPT.md).
