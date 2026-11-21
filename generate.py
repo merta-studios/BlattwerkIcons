@@ -170,10 +170,16 @@ def bicon(k):
                 +p('M9 12h36q4 0 4 4v39h-7V19H9Z','B')
                 +line('M12 15h12','H',2))
     if k in ('ebene-nach-vorne','ebene-nach-hinten'):
-        hell=r(9,9,34,34,6,'L'); gruen=r(21,21,34,34,6,'B')
-        auf=p('M38 29.5 47 39.5h-4.5v8h-9v-8H29Z','H','none')    # Pfeil im vorderen Grün
-        ab=p('M26 35 35 25h-4.5v-8h-9v8H17Z','D','none')          # Pfeil im vorderen Hell
-        return hell+gruen+auf if k=='ebene-nach-vorne' else gruen+hell+ab
+        hinten = r(9,10,34,34,4,'M')+line('M15 16h12','H',2)
+        vorne = r(20,20,34,34,4,'L')+line('M26 27h20m-20 6h14','D',2)
+        badge = c(44,44,10,'B')
+        arrow = (line('M44 49V39m-4 4 4-4 4 4','H',2.8) if k=='ebene-nach-vorne'
+                 else line('M44 39v10m-4-4 4 4 4-4','H',2.8))
+        if k=='ebene-nach-hinten':
+            hinten = r(20,20,34,34,4,'M')+line('M26 26h12','H',2)
+            vorne = r(9,10,34,34,4,'L')+line('M15 17h20m-20 6h14','D',2)
+            badge = c(44,44,10,'B')
+        return hinten+vorne+badge+arrow
     if k=='umwandeln' or k.startswith('umwandeln-in-'):
         quelle=r(6,9,25,33,4,'L')+line('M11 20c2.5-5 5 3 7.5-1s5 3 7.5-1','D',2.4)+line('M11 31c2.5-5 5 3 7.5-1s4.5 2.5 6.5 0','D',2.4)
         ziel=r(33,9,25,33,4,'B')
