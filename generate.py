@@ -181,13 +181,20 @@ def bicon(k):
             badge = c(44,44,10,'B')
         return hinten+vorne+badge+arrow
     if k=='umwandeln' or k.startswith('umwandeln-in-'):
-        quelle=r(6,9,25,33,4,'L')+line('M11 20c2.5-5 5 3 7.5-1s5 3 7.5-1','D',2.4)+line('M11 31c2.5-5 5 3 7.5-1s4.5 2.5 6.5 0','D',2.4)
-        ziel=r(33,9,25,33,4,'B')
-        if k=='umwandeln-in-text':   ziel+=line('M40 33 45.5 17 51 33','H',2.8)+line('M42.2 27.5h6.6','H',2.4)
-        elif k=='umwandeln-in-mathe': ziel+=line('M52 17H39l6.5 8.5L39 34h13','H',2.8)
-        else:                         ziel+=line('M38 18h15m-15 7h11m-11 7h14','H',2.4)
-        if k=='umwandeln': pfeil=line('M22 50h20','I',3.2)+p('M14 50 22 44.5v11Z','I','none')+p('M50 50 42 44.5v11Z','I','none')
-        else:              pfeil=line('M21 50h16','I',3.2)+p('M44 50 36 44.5v11Z','I','none')
+        # Die gemeinsame handschriftliche Quelle bleibt in allen drei Motiven gleich.
+        quelle = (r(7,9,24,34,3,'L')
+                  +line('M11 20c3-5 4 4 7-1s4 3 8-1M11 29c3-5 4 4 7-1s4 3 8-1','D',2))
+        ziel = r(33,9,24,34,3,'B')+line('M37 13h8','H',1.8)
+        if k=='umwandeln-in-text':
+            ziel += line('M39 34 45 19l6 15m-10-5h8','F',2.5)
+        elif k=='umwandeln-in-mathe':
+            ziel += line('M51 20H39l6 7-6 7h12','F',2.7)
+        else:
+            ziel += line('M39 23h12m-12 5h9m-9 5h12','F',2.2)
+        if k=='umwandeln':
+            pfeil = line('M18 51h28','I',3)+p('M12 51l8-5v10Z','B')+p('M52 51l-8-5v10Z','B')
+        else:
+            pfeil = line('M17 51h25','I',3)+p('M51 51l-9-6v12Z','B')
         return quelle+ziel+pfeil
     if k=='objekt-erstellen':  # Sticker aus G01, verkleinert, mit Plus-Badge
         return (group(icon('sticker'),'translate(4.8 4.64) scale(0.84)')
