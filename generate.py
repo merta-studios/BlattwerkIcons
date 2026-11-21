@@ -196,13 +196,17 @@ def bicon(k):
         else:
             pfeil = line('M17 51h25','I',3)+p('M51 51l-9-6v12Z','B')
         return quelle+ziel+pfeil
-    if k=='objekt-erstellen':  # Sticker aus G01, verkleinert, mit Plus-Badge
-        return (group(icon('sticker'),'translate(4.8 4.64) scale(0.84)')
-                +c(50,50,9,'B','I',2.4)+line('M45 50h10m-5-5v10','H',2.8))
-    if k=='bildschirmfoto':  # Kamera
-        return (r(25,10,14,10,2.5,'B','I',2.4)+r(8,18,48,34,6,'B')
-                +c(32,35,11.5,'L','I',2.6)+c(32,35,5.4,'M','I',2)
-                +p('M29.4 32.6q.5-2 2.6-2.4','none','H',2)+c(48.5,25,2.8,'A','I',1.7))
+    if k=='objekt-erstellen':
+        return (p('M10 22q0-7 7-8l22-4q8-1 9 7l2 15q0 4-3 7L37 49q-2 2-6 2l-14 1q-6 0-7-7Z','B')
+                +p('M35 50q4-6 3-12 6 2 11-2Z','L')
+                +c(22,27,2.2,'F','none')+c(36,25,2.2,'F','none')
+                +line('M23 34q6 5 12-2','F',2.4)+line('M16 21l6-1','H',2)
+                +c(49,49,9,'B')+line('M44 49h10m-5-5v10','H',2.7))
+    if k=='bildschirmfoto':
+        return (p('M21 19l4-7h14l4 7Z','M')+r(8,18,48,35,6,'B')
+                +p('M9 27h46v19q0 7-6 7H15q-6 0-6-7Z','M','I',2)
+                +c(32,35,12,'L')+c(32,35,7,'B','I',2)
+                +line('M28 34q0-3 3-4','H',2)+c(48,24,2.5,'A','I',1.7))
     raise KeyError(k)
 
 # ── Gruppentabellen: (Gruppe, [(slug, Anzeigename, Palette, Stern-Code)]) ───
