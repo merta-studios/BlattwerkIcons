@@ -49,7 +49,7 @@ Sonderfarbe (rot), Kombinationen wie `*12`. Regeln, Codes und Freigabe-Ablauf st
 | G07 | App-Navigation | \*2 | schwarz, weiss |
 | G08–G11 | Ehemals Beta: Bearbeiten, Ebenen, Umwandeln, Objekte & Aufnahme | meist \*1 | gruen; `loeschen` trägt \*S → rot |
 | G12–G16 | Ehemals Beta: Ansicht & Werkzeuge, Seiten, Organisation, Einstellungen & Export, Zeichnen | meist \*1; Lineal, Zoom, Stoppuhr \*23; Einstellungen, PDF \*12; Seite leeren \*S → rot | gruen bzw. Farbe/Schwarz/Weiß |
-| B01–B02 | Beta: Bearbeiten (`duplizieren`, `verschieben`), Ansicht (`einklappen`, `ausklappen`) | \*1 | gruen |
+| B01–B02 | Beta: Bearbeiten (`duplizieren`, `verschieben`), Ansicht (`einklappen-pfeile`, `ausklappen-pfeile`, `einklappen`, `ausklappen`) | \*1 | gruen |
 
 Die Codes sind in `generate.py` je Motiv hinterlegt und erzeugen die Exportliste automatisch
 (Reihenfolge: farbe, gruen, rot, schwarz, weiss). Bedeutung der Codes: AGENTS.md §3.
