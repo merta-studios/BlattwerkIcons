@@ -4,7 +4,7 @@
 > Übernahme nach `Normal/` **nur auf ausdrückliche Anweisung** des Owners.
 > Regeln: [`AGENTS.md`](../AGENTS.md) · Stil: [`STILGUIDE.md`](../STILGUIDE.md)
 
-22 Motive · 32 Exporte · Gruppen B01–B04
+24 Motive · 34 Exporte · Gruppen B01–B05
 
 ## B01 · Ansicht & Werkzeuge
 
@@ -47,5 +47,12 @@
 | 2 | `alles-exportieren` | Alles exportieren | fern | `*1` | `gruen` |
 | 3 | `seite-exportieren` | Seite exportieren | fern | `*1` | `gruen` |
 | 4 | `pdf` | PDF | fern | `*12` | `gruen` `schwarz` `weiss` |
+
+## B05 · Zeichnen
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `bezier-kurve-anpassen` | Bezier Kurve anpassen | fern | `*1` | `gruen` |
+| 2 | `dicken` | Dicken | fern | `*1` | `gruen` |
 
 Dateien je Export: `SVG/BXX/Bxx-slug-variante.svg`, `PNG/{32,64,96,256}/BXX/….png` und ein Imageset in `Blattwerk-Beta.xcassets/`.

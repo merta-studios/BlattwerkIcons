@@ -133,9 +133,9 @@ def icon(k):
                 +c(42,46,8,'B')+c(42,46,4,'L','I',1.8)
                 +c(32,30,2.8,'A','I',1.7)+line('M17 43q1-2 3-3','H',1.8))
     if k=='duplizieren':
-        return (group(r(19,9,34,37,4,'M'),'rotate(7 36 27)')
-                +r(10,18,34,37,4,'L')+r(15,23,24,10,2,'B','I',1.8)
-                +line('M16 41h20m-20 6h14','D',2.2)+line('M18 26h10','H',1.8))
+        return (r(22,7,30,34,4,'M')+line('M28 14h14','H',2)
+                +r(10,15,30,34,4,'L')+line('M16 26h18m-18 6h12','D',2.2)
+                +c(44,44,11,'B')+line('M38 44h12m-6-6v12','H',3))
     if k=='loeschen':
         return (p('M26 15v-3q0-4 4-4h4q4 0 4 4v3','none','I',2.6)
                 +p('M16 22h32l-3 30q-.4 4-4 4H23q-3.6 0-4-4Z','B')
@@ -316,6 +316,15 @@ def bicon(k):
                 + line('M17 39V31h4.2a3.6 3.6 0 0 1 0 7.2H17', 'L', 2.4)
                 + line('M25 31h4a4 4 0 0 1 0 8h-4Z', 'L', 2.4)
                 + line('M36 39V31h8M36 35h6', 'L', 2.4))
+    if k == 'bezier-kurve-anpassen':
+        return (line('M12 46C22 14 42 50 52 18', 'I', 3.4)
+                + line('M12 46L22 14M52 18L42 50', 'D', 1.6)
+                + c(22, 14, 3, 'A', 'I', 1.6) + c(42, 50, 3, 'A', 'I', 1.6)
+                + c(12, 46, 4.6, 'B') + c(52, 18, 4.6, 'B'))
+    if k == 'dicken':
+        return (p('M12 16h40', 'none', 'B', 9)
+                + p('M12 32h40', 'none', 'B', 5, 'stroke-opacity="0.55"')
+                + p('M12 48h40', 'none', 'B', 2.4, 'stroke-opacity="0.25"'))
     raise KeyError(k)
 
 # ── Gruppentabellen: (Gruppe, [(slug, Anzeigename, Palette, Stern-Code)]) ───
@@ -336,7 +345,7 @@ BETA_GROUPS = [
  ('Ansicht & Werkzeuge', [('lineal','Lineal','honey','23'),('zoom-ansicht','Zoom Ansicht','cobalt','23'),('stoppuhr','Stoppuhr','ember','23'),('scrollrichtung-vertikal','Scrollrichtung vertikal','fern','1'),('scrollrichtung-horizontal','Scrollrichtung horizontal','fern','1'),('seitenleiste-links','Seitenleiste links','fern','1'),('seitenleiste-rechts','Seitenleiste rechts','fern','1')]),
  ('Seiten', [('seite-drehen','Seite drehen','fern','1'),('seite-nach-rechts-drehen','Seite nach rechts drehen','fern','1'),('seite-nach-links-drehen','Seite nach links drehen','fern','1'),('seite-180-drehen','180 Grad drehen','fern','1'),('gehe-zu-seite','Gehe zu Seite','fern','1'),('seite-leeren','Seite leeren','rot','S'),('gliederung','Gliederung','fern','1')]),
  ('Organisation', [('favorit','Favorit','fern','1'),('lesezeichen','Lesezeichen','fern','1'),('vorlage-wechseln','Vorlage wechseln (Farbpalette)','fern','1'),('bestimmte-objekte-loeschen','Bestimmte Objekte löschen','fern','1')]),
- ('Einstellungen & Export', [('einstellungen','Einstellungen (Zahnrad)','fern','12'),('alles-exportieren','Alles exportieren','fern','1'),('seite-exportieren','Seite exportieren','fern','1'),('pdf','PDF','fern','12')]),
+ ('Einstellungen & Export', [('einstellungen','Einstellungen (Zahnrad)','fern','12'),('alles-exportieren','Alles exportieren','fern','1'),('seite-exportieren','Seite exportieren','fern','1'),('pdf','PDF','fern','12')]), ('Zeichnen', [('bezier-kurve-anpassen','Bezier Kurve anpassen','fern','1'),('dicken','Dicken','fern','1')]),
 ]
 
 AREAS = {
