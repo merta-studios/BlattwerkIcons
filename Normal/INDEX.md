@@ -3,7 +3,7 @@
 > **Freigegeben.** Alle abgenommenen Motive. Neues kommt zuerst nach `Beta/`.
 > Regeln: [`AGENTS.md`](../AGENTS.md) · Stil: [`STILGUIDE.md`](../STILGUIDE.md)
 
-46 Motive · 84 Exporte · Gruppen G01–G11
+71 Motive · 119 Exporte · Gruppen G01–G16
 
 ## G01 · Werkzeugleiste
 
@@ -105,5 +105,55 @@
 |---|---|---|---|---|---|
 | 1 | `objekt-erstellen` | Objekt erstellen | fern | `*1` | `gruen` |
 | 2 | `bildschirmfoto` | Bildschirmfoto | fern | `*1` | `gruen` |
+
+## G12 · Ansicht & Werkzeuge
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `lineal` | Lineal | honey | `*23` | `farbe` `schwarz` `weiss` |
+| 2 | `zoom-ansicht` | Zoom Ansicht | cobalt | `*23` | `farbe` `schwarz` `weiss` |
+| 3 | `stoppuhr` | Stoppuhr | ember | `*23` | `farbe` `schwarz` `weiss` |
+| 4 | `scrollrichtung-vertikal` | Scrollrichtung vertikal | fern | `*1` | `gruen` |
+| 5 | `scrollrichtung-horizontal` | Scrollrichtung horizontal | fern | `*1` | `gruen` |
+| 6 | `seitenleiste-links` | Seitenleiste links | fern | `*1` | `gruen` |
+| 7 | `seitenleiste-rechts` | Seitenleiste rechts | fern | `*1` | `gruen` |
+
+## G13 · Seiten
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `seite-drehen` | Seite drehen | fern | `*1` | `gruen` |
+| 2 | `seite-nach-rechts-drehen` | Seite nach rechts drehen | fern | `*1` | `gruen` |
+| 3 | `seite-nach-links-drehen` | Seite nach links drehen | fern | `*1` | `gruen` |
+| 4 | `seite-180-drehen` | 180 Grad drehen | fern | `*1` | `gruen` |
+| 5 | `gehe-zu-seite` | Gehe zu Seite | fern | `*1` | `gruen` |
+| 6 | `seite-leeren` | Seite leeren | rot | `*S` | `rot` |
+| 7 | `gliederung` | Gliederung | fern | `*1` | `gruen` |
+
+## G14 · Organisation
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `favorit` | Favorit | fern | `*1` | `gruen` |
+| 2 | `lesezeichen` | Lesezeichen | fern | `*1` | `gruen` |
+| 3 | `vorlage-wechseln` | Vorlage wechseln (Farbpalette) | fern | `*1` | `gruen` |
+| 4 | `bestimmte-objekte-loeschen` | Bestimmte Objekte löschen | fern | `*1` | `gruen` |
+
+## G15 · Einstellungen & Export
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `einstellungen` | Einstellungen (Zahnrad) | fern | `*12` | `gruen` `schwarz` `weiss` |
+| 2 | `alles-exportieren` | Alles exportieren | fern | `*1` | `gruen` |
+| 3 | `seite-exportieren` | Seite exportieren | fern | `*1` | `gruen` |
+| 4 | `pdf` | PDF | fern | `*12` | `gruen` `schwarz` `weiss` |
+
+## G16 · Zeichnen
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `bezier-kurve-anpassen` | Bezier Kurve anpassen | fern | `*1` | `gruen` |
+| 2 | `bezier-punkte-verschieben` | Bezier Punkte verschieben | fern | `*1` | `gruen` |
+| 3 | `dicken` | Dicken | fern | `*1` | `gruen` |
 
 Dateien je Export: `SVG/GXX/Gxx-slug-variante.svg`, `PNG/{32,64,96,256}/GXX/….png` und ein Imageset in `Blattwerk.xcassets/`.
