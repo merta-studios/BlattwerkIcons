@@ -1,6 +1,6 @@
 # Normal — freigegebene Icons
 
-- Gruppen `G01–G11`, Dateien `g0X-slug-variante.*`. Das ist der abgenommene Stand;
+- Gruppen `G01–G16`, Dateien `gXX-slug-variante.*`. Das ist der abgenommene Stand;
   die App nutzt `Blattwerk.xcassets` aus diesem Ordner.
 - **Keine neuen Motive direkt hier anlegen:** Neues geht zuerst nach `../Beta/`.
 - Nichts löschen, umbenennen oder umsortieren ohne ausdrückliche Anweisung.

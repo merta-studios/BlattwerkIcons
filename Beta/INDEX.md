@@ -4,56 +4,20 @@
 > Übernahme nach `Normal/` **nur auf ausdrückliche Anweisung** des Owners.
 > Regeln: [`AGENTS.md`](../AGENTS.md) · Stil: [`STILGUIDE.md`](../STILGUIDE.md)
 
-25 Motive · 35 Exporte · Gruppen B01–B05
+4 Motive · 4 Exporte · Gruppen B01–B02
 
-## B01 · Ansicht & Werkzeuge
-
-| # | Slug | Anzeigename | Palette | Code | Exporte |
-|---|---|---|---|---|---|
-| 1 | `lineal` | Lineal | honey | `*23` | `farbe` `schwarz` `weiss` |
-| 2 | `zoom-ansicht` | Zoom Ansicht | cobalt | `*23` | `farbe` `schwarz` `weiss` |
-| 3 | `stoppuhr` | Stoppuhr | ember | `*23` | `farbe` `schwarz` `weiss` |
-| 4 | `scrollrichtung-vertikal` | Scrollrichtung vertikal | fern | `*1` | `gruen` |
-| 5 | `scrollrichtung-horizontal` | Scrollrichtung horizontal | fern | `*1` | `gruen` |
-| 6 | `seitenleiste-links` | Seitenleiste links | fern | `*1` | `gruen` |
-| 7 | `seitenleiste-rechts` | Seitenleiste rechts | fern | `*1` | `gruen` |
-
-## B02 · Seiten
+## B01 · Bearbeiten
 
 | # | Slug | Anzeigename | Palette | Code | Exporte |
 |---|---|---|---|---|---|
-| 1 | `seite-drehen` | Seite drehen | fern | `*1` | `gruen` |
-| 2 | `seite-nach-rechts-drehen` | Seite nach rechts drehen | fern | `*1` | `gruen` |
-| 3 | `seite-nach-links-drehen` | Seite nach links drehen | fern | `*1` | `gruen` |
-| 4 | `seite-180-drehen` | 180 Grad drehen | fern | `*1` | `gruen` |
-| 5 | `gehe-zu-seite` | Gehe zu Seite | fern | `*1` | `gruen` |
-| 6 | `seite-leeren` | Seite leeren | rot | `*S` | `rot` |
-| 7 | `gliederung` | Gliederung | fern | `*1` | `gruen` |
+| 1 | `duplizieren` | Duplizieren | fern | `*1` | `gruen` |
+| 2 | `verschieben` | Verschieben | fern | `*1` | `gruen` |
 
-## B03 · Organisation
+## B02 · Ansicht
 
 | # | Slug | Anzeigename | Palette | Code | Exporte |
 |---|---|---|---|---|---|
-| 1 | `favorit` | Favorit | fern | `*1` | `gruen` |
-| 2 | `lesezeichen` | Lesezeichen | fern | `*1` | `gruen` |
-| 3 | `vorlage-wechseln` | Vorlage wechseln (Farbpalette) | fern | `*1` | `gruen` |
-| 4 | `bestimmte-objekte-loeschen` | Bestimmte Objekte löschen | fern | `*1` | `gruen` |
-
-## B04 · Einstellungen & Export
-
-| # | Slug | Anzeigename | Palette | Code | Exporte |
-|---|---|---|---|---|---|
-| 1 | `einstellungen` | Einstellungen (Zahnrad) | fern | `*12` | `gruen` `schwarz` `weiss` |
-| 2 | `alles-exportieren` | Alles exportieren | fern | `*1` | `gruen` |
-| 3 | `seite-exportieren` | Seite exportieren | fern | `*1` | `gruen` |
-| 4 | `pdf` | PDF | fern | `*12` | `gruen` `schwarz` `weiss` |
-
-## B05 · Zeichnen
-
-| # | Slug | Anzeigename | Palette | Code | Exporte |
-|---|---|---|---|---|---|
-| 1 | `bezier-kurve-anpassen` | Bezier Kurve anpassen | fern | `*1` | `gruen` |
-| 2 | `bezier-punkte-verschieben` | Bezier Punkte verschieben | fern | `*1` | `gruen` |
-| 3 | `dicken` | Dicken | fern | `*1` | `gruen` |
+| 1 | `einklappen` | Einklappen | fern | `*1` | `gruen` |
+| 2 | `ausklappen` | Ausklappen | fern | `*1` | `gruen` |
 
 Dateien je Export: `SVG/BXX/Bxx-slug-variante.svg`, `PNG/{32,64,96,256}/BXX/….png` und ein Imageset in `Blattwerk-Beta.xcassets/`.

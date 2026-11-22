@@ -2,8 +2,8 @@
 """Blattwerk · reproduzierbarer SVG/PNG/Asset-Export für `Normal/` und `Beta/`.
 
 Aufruf:  python generate.py             beide Bereiche neu erzeugen
-         python generate.py normal      nur Normal/ (G01…G11)
-         python generate.py beta        nur Beta/   (B01…B05)
+         python generate.py normal      nur Normal/ (G01…G16)
+         python generate.py beta        nur Beta/   (B01…B02)
 
 Regeln:  AGENTS.md    → Stern-Codes (*1 *2 *3 *S), Beta-Policy, Freigabe
          STILGUIDE.md → Geometrie, Paletten, Abnahme
@@ -77,11 +77,99 @@ def line(d, s='I', w=2): return p(d, 'none', s, w)
 def group(content, t): return f'<g transform="{t}">{content}</g>'
 def tilt(z, a=38): return group(z, f'rotate({a} 32 32)')
 
-# ── Normal: freigegebene Motive (G01…G11; G08–G11 aus Beta übernommen) ──────────────────────────────────
+# ── Normal: freigegebene Motive (G01…G16; G08–G16 aus Beta übernommen) ──────────────────────────────────
 def nibpen(): return tilt(r(26,5,12,31,4,'B')+r(26,10,12,5,1,'A','I',1.8)+line('M29 19v12','H')+p('M26 35h12l3 8-9 16-9-16Z','L')+line('M32 56V46')+c(32,44,2,'I','none'))
 def standard(): return tilt(r(18,17,28,33,5,'B')+p('M18 34h28v11q0 5-5 5H23q-5 0-5-5Z','L')+line('M23 23h12','H',2.6)+line('M22 39h20','M'),42)
 def shapes(): return r(8,12,27,29,5,'B')+p('m40 9 15 26H25Z','A')+c(38,43,13,'L')+line('M30 43q0-6 6-8','M')
 def page(): return p('M17 8h22l10 10v34q0 4-4 4H17q-4 0-4-4V12q0-4 4-4Z','L')+p('M38 8v11h11Z','B','I',2)
+def _pt(cx, cy, R, a):
+    t = math.radians(a); return cx + R*math.cos(t), cy + R*math.sin(t)
+def arc(cx, cy, R, a0, a1):
+    """Kreisbogen von a0 nach a1 (Grad, Bildschirmkoordinaten: 90 = unten)."""
+    x0, y0 = _pt(cx, cy, R, a0); x1, y1 = _pt(cx, cy, R, a1)
+    large = 1 if abs(a1 - a0) > 180 else 0
+    sweep = 1 if a1 > a0 else 0
+    return f'M{x0:.2f} {y0:.2f}A{R} {R} 0 {large} {sweep} {x1:.2f} {y1:.2f}'
+def _star_pts(cx, cy, R, ri):
+    pts_out, pts_in = [], []
+    for i in range(5):
+        ao = math.radians(-90 + i * 72)
+        ai = math.radians(-90 + i * 72 + 36)
+        pts_out.append((cx + R * math.cos(ao), cy + R * math.sin(ao)))
+        pts_in.append((cx + ri * math.cos(ai), cy + ri * math.sin(ai)))
+    return pts_out, pts_in
+def star_round(cx, cy, R, ri):
+    """Weich gerundeter 5-zackiger Blattwerk-Stern."""
+    pts_out, pts_in = _star_pts(cx, cy, R, ri)
+    d = []
+    for i in range(5):
+        ox, oy = pts_out[i]
+        ix_prev, iy_prev = pts_in[(i - 1) % 5]
+        ix_next, iy_next = pts_in[i]
+        t = 0.20
+        b1x, b1y = ox + (ix_prev - ox) * t, oy + (iy_prev - oy) * t
+        b2x, b2y = ox + (ix_next - ox) * t, oy + (iy_next - oy) * t
+        v1x, v1y = ix_next + (ox - ix_next) * 0.15, iy_next + (oy - iy_next) * 0.15
+        ox_n, oy_n = pts_out[(i + 1) % 5]
+        v2x, v2y = ix_next + (ox_n - ix_next) * 0.15, iy_next + (oy_n - iy_next) * 0.15
+        d.append(f'M{b1x:.2f} {b1y:.2f}' if i == 0 else f'L{b1x:.2f} {b1y:.2f}')
+        d.append(f'Q{ox:.2f} {oy:.2f} {b2x:.2f} {b2y:.2f}')
+        d.append(f'L{v1x:.2f} {v1y:.2f}')
+        d.append(f'Q{ix_next:.2f} {iy_next:.2f} {v2x:.2f} {v2y:.2f}')
+    d.append('Z')
+    return ''.join(d)
+def gear_round(cx, cy, ro, ri, n=8):
+    """Zahnrad mit weich abgerundeten Zahnspitzen und -füßen."""
+    def xy(ang_deg, rad):
+        a = math.radians(ang_deg)
+        return cx + rad * math.cos(a), cy + rad * math.sin(a)
+    d = []
+    for i in range(n):
+        t = i * 360 / n
+        v0 = xy(t - 18, ri)
+        v1 = xy(t - 13, ri)
+        fl_in = xy(t - 11.2, ri + (ro - ri) * 0.45)
+        t_c1 = xy(t - 5.2, ro)
+        t_c2 = xy(t + 5.2, ro)
+        fl_out = xy(t + 11.2, ri + (ro - ri) * 0.45)
+        v2 = xy(t + 13, ri)
+        v3 = xy(t + 18, ri)
+        k_in, k_tip1 = xy(t - 12.2, ri), xy(t - 9.5, ro)
+        k_tip2, k_out = xy(t + 9.5, ro), xy(t + 12.2, ri)
+        if i == 0:
+            d.append(f'M{v0[0]:.2f} {v0[1]:.2f}')
+        d.append(f'L{v1[0]:.2f} {v1[1]:.2f}')
+        d.append(f'Q{k_in[0]:.2f} {k_in[1]:.2f} {fl_in[0]:.2f} {fl_in[1]:.2f}')
+        d.append(f'Q{k_tip1[0]:.2f} {k_tip1[1]:.2f} {t_c1[0]:.2f} {t_c1[1]:.2f}')
+        d.append(f'L{t_c2[0]:.2f} {t_c2[1]:.2f}')
+        d.append(f'Q{k_tip2[0]:.2f} {k_tip2[1]:.2f} {fl_out[0]:.2f} {fl_out[1]:.2f}')
+        d.append(f'Q{k_out[0]:.2f} {k_out[1]:.2f} {v2[0]:.2f} {v2[1]:.2f}')
+        d.append(f'L{v3[0]:.2f} {v3[1]:.2f}')
+    d.append('Z')
+    return ''.join(d)
+def curved_arrow(cx, cy, r_in, r_out, a_start, a_end, cw=True, head_extra=3.8, head_ang=22):
+    """Kräftiger geschwungener Bandpfeil von a_start nach a_end."""
+    r_mid = 0.5 * (r_in + r_out)
+    a_shaft = a_end - head_ang if cw else a_end + head_ang
+    def pt(ang, rad):
+        t = math.radians(ang)
+        return cx + rad * math.cos(t), cy + rad * math.sin(t)
+    s_out, e_out = pt(a_start, r_out), pt(a_shaft, r_out)
+    wing_out, tip = pt(a_shaft, r_out + head_extra), pt(a_end, r_mid)
+    wing_in, e_in = pt(a_shaft, r_in - head_extra), pt(a_shaft, r_in)
+    s_in = pt(a_start, r_in)
+    sweep_out, sweep_in = (1, 0) if cw else (0, 1)
+    large = 1 if abs(a_shaft - a_start) > 180 else 0
+    return (f'M{s_out[0]:.2f} {s_out[1]:.2f}'
+            f'A{r_out} {r_out} 0 {large} {sweep_out} {e_out[0]:.2f} {e_out[1]:.2f}'
+            f'L{wing_out[0]:.2f} {wing_out[1]:.2f}L{tip[0]:.2f} {tip[1]:.2f}'
+            f'L{wing_in[0]:.2f} {wing_in[1]:.2f}L{e_in[0]:.2f} {e_in[1]:.2f}'
+            f'A{r_in} {r_in} 0 {large} {sweep_in} {s_in[0]:.2f} {s_in[1]:.2f}Z')
+def doc_page(x=13, y=8, w=36, h=48, fold=10, rr=4, f='L'):
+    """Dokumentseite mit sauberem Eselsohr-Falz."""
+    rx, by, fx, fy = x + w, y + h, x + w - fold, y + fold
+    main = f'M{x+rr} {y}H{fx}L{rx} {fy}V{by-rr}q0 {rr}-{rr} {rr}H{x+rr}q-{rr} 0-{rr}-{rr}V{y+rr}q0-{rr} {rr}-{rr}Z'
+    return p(main, f) + p(f'M{fx} {y}V{fy}H{rx}Z', 'B', 'I', 2)
 
 def icon(k):
     if k=='stift': return tilt(r(26,7,12,36,4,'B')+p('M26 37h12v7l-6 13-6-13Z','L')+p('m29 51 3 7 3-7Z','I','I',1.5)+r(26,14,12,4,0.7,'A','I',1.6)+line('M29.5 21v12','H',2))
@@ -201,101 +289,6 @@ def icon(k):
                 +p('M9 27h46v19q0 7-6 7H15q-6 0-6-7Z','M','I',2)
                 +c(32,35,12,'L')+c(32,35,7,'B','I',2)
                 +line('M28 34q0-3 3-4','H',2)+c(48,24,2.5,'A','I',1.7))
-    raise KeyError(k)
-
-# ── Geometrie-Helfer für Beta (Bögen, Sterne, Zahnrad, Seiten) ─────────────
-def _pt(cx, cy, R, a):
-    t = math.radians(a); return cx + R*math.cos(t), cy + R*math.sin(t)
-def arc(cx, cy, R, a0, a1):
-    """Kreisbogen von a0 nach a1 (Grad, Bildschirmkoordinaten: 90 = unten)."""
-    x0, y0 = _pt(cx, cy, R, a0); x1, y1 = _pt(cx, cy, R, a1)
-    large = 1 if abs(a1 - a0) > 180 else 0
-    sweep = 1 if a1 > a0 else 0
-    return f'M{x0:.2f} {y0:.2f}A{R} {R} 0 {large} {sweep} {x1:.2f} {y1:.2f}'
-def _star_pts(cx, cy, R, ri):
-    pts_out, pts_in = [], []
-    for i in range(5):
-        ao = math.radians(-90 + i * 72)
-        ai = math.radians(-90 + i * 72 + 36)
-        pts_out.append((cx + R * math.cos(ao), cy + R * math.sin(ao)))
-        pts_in.append((cx + ri * math.cos(ai), cy + ri * math.sin(ai)))
-    return pts_out, pts_in
-def star_round(cx, cy, R, ri):
-    """Weich gerundeter 5-zackiger Blattwerk-Stern."""
-    pts_out, pts_in = _star_pts(cx, cy, R, ri)
-    d = []
-    for i in range(5):
-        ox, oy = pts_out[i]
-        ix_prev, iy_prev = pts_in[(i - 1) % 5]
-        ix_next, iy_next = pts_in[i]
-        t = 0.20
-        b1x, b1y = ox + (ix_prev - ox) * t, oy + (iy_prev - oy) * t
-        b2x, b2y = ox + (ix_next - ox) * t, oy + (iy_next - oy) * t
-        v1x, v1y = ix_next + (ox - ix_next) * 0.15, iy_next + (oy - iy_next) * 0.15
-        ox_n, oy_n = pts_out[(i + 1) % 5]
-        v2x, v2y = ix_next + (ox_n - ix_next) * 0.15, iy_next + (oy_n - iy_next) * 0.15
-        d.append(f'M{b1x:.2f} {b1y:.2f}' if i == 0 else f'L{b1x:.2f} {b1y:.2f}')
-        d.append(f'Q{ox:.2f} {oy:.2f} {b2x:.2f} {b2y:.2f}')
-        d.append(f'L{v1x:.2f} {v1y:.2f}')
-        d.append(f'Q{ix_next:.2f} {iy_next:.2f} {v2x:.2f} {v2y:.2f}')
-    d.append('Z')
-    return ''.join(d)
-def gear_round(cx, cy, ro, ri, n=8):
-    """Zahnrad mit weich abgerundeten Zahnspitzen und -füßen."""
-    def xy(ang_deg, rad):
-        a = math.radians(ang_deg)
-        return cx + rad * math.cos(a), cy + rad * math.sin(a)
-    d = []
-    for i in range(n):
-        t = i * 360 / n
-        v0 = xy(t - 18, ri)
-        v1 = xy(t - 13, ri)
-        fl_in = xy(t - 11.2, ri + (ro - ri) * 0.45)
-        t_c1 = xy(t - 5.2, ro)
-        t_c2 = xy(t + 5.2, ro)
-        fl_out = xy(t + 11.2, ri + (ro - ri) * 0.45)
-        v2 = xy(t + 13, ri)
-        v3 = xy(t + 18, ri)
-        k_in, k_tip1 = xy(t - 12.2, ri), xy(t - 9.5, ro)
-        k_tip2, k_out = xy(t + 9.5, ro), xy(t + 12.2, ri)
-        if i == 0:
-            d.append(f'M{v0[0]:.2f} {v0[1]:.2f}')
-        d.append(f'L{v1[0]:.2f} {v1[1]:.2f}')
-        d.append(f'Q{k_in[0]:.2f} {k_in[1]:.2f} {fl_in[0]:.2f} {fl_in[1]:.2f}')
-        d.append(f'Q{k_tip1[0]:.2f} {k_tip1[1]:.2f} {t_c1[0]:.2f} {t_c1[1]:.2f}')
-        d.append(f'L{t_c2[0]:.2f} {t_c2[1]:.2f}')
-        d.append(f'Q{k_tip2[0]:.2f} {k_tip2[1]:.2f} {fl_out[0]:.2f} {fl_out[1]:.2f}')
-        d.append(f'Q{k_out[0]:.2f} {k_out[1]:.2f} {v2[0]:.2f} {v2[1]:.2f}')
-        d.append(f'L{v3[0]:.2f} {v3[1]:.2f}')
-    d.append('Z')
-    return ''.join(d)
-def curved_arrow(cx, cy, r_in, r_out, a_start, a_end, cw=True, head_extra=3.8, head_ang=22):
-    """Kräftiger geschwungener Bandpfeil von a_start nach a_end."""
-    r_mid = 0.5 * (r_in + r_out)
-    a_shaft = a_end - head_ang if cw else a_end + head_ang
-    def pt(ang, rad):
-        t = math.radians(ang)
-        return cx + rad * math.cos(t), cy + rad * math.sin(t)
-    s_out, e_out = pt(a_start, r_out), pt(a_shaft, r_out)
-    wing_out, tip = pt(a_shaft, r_out + head_extra), pt(a_end, r_mid)
-    wing_in, e_in = pt(a_shaft, r_in - head_extra), pt(a_shaft, r_in)
-    s_in = pt(a_start, r_in)
-    sweep_out, sweep_in = (1, 0) if cw else (0, 1)
-    large = 1 if abs(a_shaft - a_start) > 180 else 0
-    return (f'M{s_out[0]:.2f} {s_out[1]:.2f}'
-            f'A{r_out} {r_out} 0 {large} {sweep_out} {e_out[0]:.2f} {e_out[1]:.2f}'
-            f'L{wing_out[0]:.2f} {wing_out[1]:.2f}L{tip[0]:.2f} {tip[1]:.2f}'
-            f'L{wing_in[0]:.2f} {wing_in[1]:.2f}L{e_in[0]:.2f} {e_in[1]:.2f}'
-            f'A{r_in} {r_in} 0 {large} {sweep_in} {s_in[0]:.2f} {s_in[1]:.2f}Z')
-def doc_page(x=13, y=8, w=36, h=48, fold=10, rr=4, f='L'):
-    """Dokumentseite mit sauberem Eselsohr-Falz."""
-    rx, by, fx, fy = x + w, y + h, x + w - fold, y + fold
-    main = f'M{x+rr} {y}H{fx}L{rx} {fy}V{by-rr}q0 {rr}-{rr} {rr}H{x+rr}q-{rr} 0-{rr}-{rr}V{y+rr}q0-{rr} {rr}-{rr}Z'
-    return p(main, f) + p(f'M{fx} {y}V{fy}H{rx}Z', 'B', 'I', 2)
-
-# ── Beta: neue Motive (B01…B05) ─────────────────────────────────────────────
-# Gleiche Regeln wie Normal: Handgeräte (Lineal) +38° gekippt, Bedienelemente gerade.
-def bicon(k):
     if k == 'lineal':
         ticks = ''.join(line(f'M{43-w} {y}h{w}', 'I', 2.0)
                         for y, w in [(12, 6.5), (19, 4.2), (26, 6.5), (33, 4.2), (40, 6.5), (47, 4.2), (54, 6.5)])
@@ -448,6 +441,29 @@ def bicon(k):
                 + line('M15 43.0q6.5-2.1 11.5-0.4', 'H', 1.8))
     raise KeyError(k)
 
+# ── Beta: neue Motive (B01…B02) ─────────────────────────────────────────────
+# Gleiche Regeln wie Normal: Handgeräte +38° gekippt, Bedienelemente gerade.
+def bicon(k):
+    if k == 'duplizieren':
+        return (r(8.5, 8.5, 31, 31, 4.5, 'L') + line('M14 14h10', 'H', 2.0)
+                + r(24.5, 24.5, 31, 31, 4.5, 'B')
+                + line('M40 32.5v15m-7.5-7.5h15', 'H', 4.5))
+    if k == 'verschieben':
+        body = 'M32 6.5l10 10.5H36v11h11v-6L57.5 32 47 42v-6H36v11h6L32 57.5 22 47h6V36H17v6L6.5 32 17 22v6h11V17h-6Z'
+        return p(body, 'B', 'I', 2.6) + c(32, 32, 5.8, 'A', 'I', 2.3)
+    if k == 'einklappen':
+        return (r(9, 13.5, 46, 21.5, 5, 'L')
+                + p('M9 18.5q0-5 5-5h36q5 0 5 5v7.5H9Z', 'B')
+                + line('M14.5 19.5h15', 'H', 2.0) + r(40.5, 17.5, 9, 4.5, 1.8, 'A', 'I', 1.7)
+                + p('M21.5 49.5L32 39 42.5 49.5l-3.8 3.8-6.7-6.7-6.7 6.7Z', 'B', 'I', 2.4))
+    if k == 'ausklappen':
+        return (r(9, 9, 46, 39, 5, 'L')
+                + p('M9 14q0-5 5-5h36q5 0 5 5v7.5H9Z', 'B')
+                + line('M14.5 15h15', 'H', 2.0) + r(40.5, 13, 9, 4.5, 1.8, 'A', 'I', 1.7)
+                + line('M16 28.5h24m-24 7h17', 'D', 2.2)
+                + p('M21.5 44.5L32 55l10.5-10.5-3.8-3.8-6.7 6.7-6.7-6.7Z', 'B', 'I', 2.4))
+    raise KeyError(k)
+
 # ── Gruppentabellen: (Gruppe, [(slug, Anzeigename, Palette, Stern-Code)]) ───
 GROUPS = [
  ('Werkzeugleiste', [('stift','Stift','fern','23'),('freihandlasso','Freihandlasso','fern','23'),('boxlasso','Boxlasso','sea','23'),('radiergummi','Radiergummi','coral','23'),('textfeld','Textfeld','fern','23'),('formen','Formen','iris','23'),('sticker','Objekte · Sticker','honey','23'),('bilder','Bilder','cobalt','23'),('notizzettel','Notizzettel','honey','23'),('laserpointer','Laserpointer','ember','23')]),
@@ -461,12 +477,15 @@ GROUPS = [
  ('Ebenen', [('ebene-nach-vorne','Ebene nach vorne','fern','1'),('ebene-nach-hinten','Ebene nach hinten','fern','1')]),
  ('Umwandeln', [('umwandeln','Umwandeln','fern','1'),('umwandeln-in-text','In Text umwandeln','fern','1'),('umwandeln-in-mathe','In Mathe umwandeln','fern','1')]),
  ('Objekte & Aufnahme', [('objekt-erstellen','Objekt erstellen','fern','1'),('bildschirmfoto','Bildschirmfoto','fern','1')]),
-]
-BETA_GROUPS = [
  ('Ansicht & Werkzeuge', [('lineal','Lineal','honey','23'),('zoom-ansicht','Zoom Ansicht','cobalt','23'),('stoppuhr','Stoppuhr','ember','23'),('scrollrichtung-vertikal','Scrollrichtung vertikal','fern','1'),('scrollrichtung-horizontal','Scrollrichtung horizontal','fern','1'),('seitenleiste-links','Seitenleiste links','fern','1'),('seitenleiste-rechts','Seitenleiste rechts','fern','1')]),
  ('Seiten', [('seite-drehen','Seite drehen','fern','1'),('seite-nach-rechts-drehen','Seite nach rechts drehen','fern','1'),('seite-nach-links-drehen','Seite nach links drehen','fern','1'),('seite-180-drehen','180 Grad drehen','fern','1'),('gehe-zu-seite','Gehe zu Seite','fern','1'),('seite-leeren','Seite leeren','rot','S'),('gliederung','Gliederung','fern','1')]),
  ('Organisation', [('favorit','Favorit','fern','1'),('lesezeichen','Lesezeichen','fern','1'),('vorlage-wechseln','Vorlage wechseln (Farbpalette)','fern','1'),('bestimmte-objekte-loeschen','Bestimmte Objekte löschen','fern','1')]),
- ('Einstellungen & Export', [('einstellungen','Einstellungen (Zahnrad)','fern','12'),('alles-exportieren','Alles exportieren','fern','1'),('seite-exportieren','Seite exportieren','fern','1'),('pdf','PDF','fern','12')]), ('Zeichnen', [('bezier-kurve-anpassen','Bezier Kurve anpassen','fern','1'),('bezier-punkte-verschieben','Bezier Punkte verschieben','fern','1'),('dicken','Dicken','fern','1')]),
+ ('Einstellungen & Export', [('einstellungen','Einstellungen (Zahnrad)','fern','12'),('alles-exportieren','Alles exportieren','fern','1'),('seite-exportieren','Seite exportieren','fern','1'),('pdf','PDF','fern','12')]),
+ ('Zeichnen', [('bezier-kurve-anpassen','Bezier Kurve anpassen','fern','1'),('bezier-punkte-verschieben','Bezier Punkte verschieben','fern','1'),('dicken','Dicken','fern','1')]),
+]
+BETA_GROUPS = [
+ ('Bearbeiten', [('duplizieren','Duplizieren','fern','1'),('verschieben','Verschieben','fern','1')]),
+ ('Ansicht', [('einklappen','Einklappen','fern','1'),('ausklappen','Ausklappen','fern','1')]),
 ]
 
 AREAS = {
