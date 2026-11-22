@@ -11,7 +11,7 @@ der Stilguide für das Aussehen.
 
 | Ordner | Inhalt | Status |
 |---|---|---|
-| `Normal/` | freigegebene Motive, Gruppen **G01–G07** (`g0X-slug-variante.*`) | abgenommen; die App nutzt `Normal/Blattwerk.xcassets` |
+| `Normal/` | freigegebene Motive, Gruppen **G01–G11** (`g0X-slug-variante.*`) | abgenommen; die App nutzt `Normal/Blattwerk.xcassets` |
 | `Beta/`   | neue Motive, Gruppen **B01–…** (`b0X-slug-variante.*`) | in Arbeit, **nicht freigegeben** |
 
 In jedem Bereich liegen, vom Skript erzeugt: `SVG/<Gruppe>/`, `PNG/{32,64,96,256}/<Gruppe>/`,
@@ -56,6 +56,14 @@ Kombinationen — die Exportreihenfolge ist fest (`farbe, gruen, rot, schwarz, w
 - `*13` = grün + farbe
 - `*123` = farbe + grün + schwarz + weiss
 - `*S2` = rot + schwarz + weiss (falls für ein destruktives Icon Monovarianten gewünscht werden)
+
+Die Stern-Codes in Owner-Worten (verbindlich):
+
+- **`*1`** – nur grüner Stil mit mehreren Grüntönen.
+- **`*2`** – schwarzer und weißer Stil, beide einmal; nur Schwarz und Weiß, keine Farbunterschiede pro Icon.
+- **`*3`** – farbenfroh, mehrere zum Icon passende Farben (nicht unbedingt grün).
+- **Mehrere Sternchen** – alle genannten Stile zusammen: `*12` = grün + schwarz + weiß, `*23` = farbig + schwarz + weiß.
+- **`*S`** – Sonderfarbe rot (destruktive Aktionen).
 
 Regeln dazu:
 

@@ -2,7 +2,7 @@
 
 **Auftrag an den nächsten Agenten:** Erweitere diese iPad-Notizwerkzeuge durch geskriptete Vektorgeometrie, nicht durch generative Bilder, Emoji, Icon-Fonts oder nachgezeichnete Screenshots. Alle Icons sind freigestellte Piktogramme. Sie sind keine quadratischen App-Logos mit Hintergrundplatte. Die quadratische Fläche ist nur das Koordinatensystem.
 
-**Zwei Bereiche:** `Normal/` führt die freigegebenen Motive (Gruppen G01–G07), `Beta/` alles Neue
+**Zwei Bereiche:** `Normal/` führt die freigegebenen Motive (Gruppen G01–G11), `Beta/` alles Neue
 (Gruppen B01–…). Neue Motive werden **immer** in `Beta/` angelegt und nur auf ausdrückliche
 Anweisung des Owners nach `Normal/` übernommen. Welche Varianten ein Motiv bekommt, sagt sein
 **Stern-Code**: `*1` grün in mehreren Grüntönen, `*2` schwarz + weiß, `*3` farbenfroh, `*S`
@@ -47,7 +47,8 @@ Sonderfarbe (rot), Kombinationen wie `*12`. Regeln, Codes und Freigabe-Ablauf st
 | G05 | Radierer | \*3 | farbe |
 | G06 | Verlauf | \*2 | schwarz, weiss |
 | G07 | App-Navigation | \*2 | schwarz, weiss |
-| B01–B04 | Beta: Bearbeiten, Ebenen, Umwandeln, Objekte & Aufnahme | meist \*1 | gruen; `loeschen` trägt \*S → rot |
+| G08–G11 | Ehemals Beta: Bearbeiten, Ebenen, Umwandeln, Objekte & Aufnahme | meist \*1 | gruen; `loeschen` trägt \*S → rot |
+| B01–B04 | Beta (Stand 2026-11-21): Ansicht & Werkzeuge, Seiten, Organisation, Einstellungen & Export | meist \*1; Lineal, Zoom, Stoppuhr \*23; Einstellungen, PDF \*12; Seite leeren \*S → rot | gruen bzw. Farbe/Schwarz/Weiß |
 
 Die Codes sind in `generate.py` je Motiv hinterlegt und erzeugen die Exportliste automatisch
 (Reihenfolge: farbe, gruen, rot, schwarz, weiss). Bedeutung der Codes: AGENTS.md §3.
