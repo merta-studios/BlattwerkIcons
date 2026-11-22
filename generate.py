@@ -3,7 +3,7 @@
 
 Aufruf:  python generate.py             beide Bereiche neu erzeugen
          python generate.py normal      nur Normal/ (G01…G11)
-         python generate.py beta        nur Beta/   (B01…B04)
+         python generate.py beta        nur Beta/   (B01…B05)
 
 Regeln:  AGENTS.md    → Stern-Codes (*1 *2 *3 *S), Beta-Policy, Freigabe
          STILGUIDE.md → Geometrie, Paletten, Abnahme
@@ -435,6 +435,12 @@ def bicon(k):
                 + r(7, 43, 8.5, 8.5, 2, 'L', 'I', 2.4) + r(48.5, 43, 8.5, 8.5, 2, 'L', 'I', 2.4)
                 + r(27.5, 14.5, 9, 9, 2.2, 'L', 'I', 2.4)
                 + c(11, 19, 4.4, 'A', 'I', 2.2) + c(53, 19, 4.4, 'A', 'I', 2.2))
+    if k == 'bezier-punkte-verschieben':
+        zig = 'M9.5 47L20 21.5L33.5 44L45 18.5L54.5 34'
+        return (p(zig, 'none', 'I', 6.4) + p(zig, 'none', 'B', 2.8)
+                + r(15.5, 17, 9, 9, 2.2, 'L', 'I', 2.4)
+                + r(29, 39.5, 9, 9, 2.2, 'A', 'I', 2.4)
+                + r(40.5, 14, 9, 9, 2.2, 'L', 'I', 2.4))
     if k == 'dicken':
         return (line('M11 15q10.5-4.5 21 0t21 0', 'I', 3.4)
                 + p('M11 29q10.5-4.5 21 0t21 0', 'none', 'I', 7.6) + p('M11 29q10.5-4.5 21 0t21 0', 'none', 'M', 3.0)
@@ -460,7 +466,7 @@ BETA_GROUPS = [
  ('Ansicht & Werkzeuge', [('lineal','Lineal','honey','23'),('zoom-ansicht','Zoom Ansicht','cobalt','23'),('stoppuhr','Stoppuhr','ember','23'),('scrollrichtung-vertikal','Scrollrichtung vertikal','fern','1'),('scrollrichtung-horizontal','Scrollrichtung horizontal','fern','1'),('seitenleiste-links','Seitenleiste links','fern','1'),('seitenleiste-rechts','Seitenleiste rechts','fern','1')]),
  ('Seiten', [('seite-drehen','Seite drehen','fern','1'),('seite-nach-rechts-drehen','Seite nach rechts drehen','fern','1'),('seite-nach-links-drehen','Seite nach links drehen','fern','1'),('seite-180-drehen','180 Grad drehen','fern','1'),('gehe-zu-seite','Gehe zu Seite','fern','1'),('seite-leeren','Seite leeren','rot','S'),('gliederung','Gliederung','fern','1')]),
  ('Organisation', [('favorit','Favorit','fern','1'),('lesezeichen','Lesezeichen','fern','1'),('vorlage-wechseln','Vorlage wechseln (Farbpalette)','fern','1'),('bestimmte-objekte-loeschen','Bestimmte Objekte löschen','fern','1')]),
- ('Einstellungen & Export', [('einstellungen','Einstellungen (Zahnrad)','fern','12'),('alles-exportieren','Alles exportieren','fern','1'),('seite-exportieren','Seite exportieren','fern','1'),('pdf','PDF','fern','12')]), ('Zeichnen', [('bezier-kurve-anpassen','Bezier Kurve anpassen','fern','1'),('dicken','Dicken','fern','1')]),
+ ('Einstellungen & Export', [('einstellungen','Einstellungen (Zahnrad)','fern','12'),('alles-exportieren','Alles exportieren','fern','1'),('seite-exportieren','Seite exportieren','fern','1'),('pdf','PDF','fern','12')]), ('Zeichnen', [('bezier-kurve-anpassen','Bezier Kurve anpassen','fern','1'),('bezier-punkte-verschieben','Bezier Punkte verschieben','fern','1'),('dicken','Dicken','fern','1')]),
 ]
 
 AREAS = {
