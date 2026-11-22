@@ -203,7 +203,7 @@ def icon(k):
                 +line('M28 34q0-3 3-4','H',2)+c(48,24,2.5,'A','I',1.7))
     raise KeyError(k)
 
-# ── Geometrie-Helfer für Beta (Bögen, Pfeilspitzen, Sterne, Zahnrad) ───────
+# ── Geometrie-Helfer für Beta (Bögen, Sterne, Zahnrad, Seiten) ─────────────
 def _pt(cx, cy, R, a):
     t = math.radians(a); return cx + R*math.cos(t), cy + R*math.sin(t)
 def arc(cx, cy, R, a0, a1):
@@ -212,119 +212,234 @@ def arc(cx, cy, R, a0, a1):
     large = 1 if abs(a1 - a0) > 180 else 0
     sweep = 1 if a1 > a0 else 0
     return f'M{x0:.2f} {y0:.2f}A{R} {R} 0 {large} {sweep} {x1:.2f} {y1:.2f}'
-def head(cx, cy, R, a1, ccw=False, s=4.2):
-    """Pfeilspitze am Bogenende a1; Laufrichtung = Bogenrichtung an dieser Stelle."""
-    px, py = _pt(cx, cy, R, a1); t = math.radians(a1)
-    dx, dy = -math.sin(t), math.cos(t)
-    if ccw: dx, dy = -dx, -dy
-    bx, by = -dx, -dy
-    def wing(ang):
-        c_, s_ = math.cos(ang), math.sin(ang)
-        return px + s*(bx*c_ - by*s_), py + s*(bx*s_ + by*c_)
-    (x1, y1), (x2, y2) = wing(math.radians(40)), wing(math.radians(-40))
-    return f'M{x1:.2f} {y1:.2f}L{px:.2f} {py:.2f}L{x2:.2f} {y2:.2f}'
-def star_d(cx, cy, R, ri):
-    pts = []
-    for i in range(10):
-        a = math.radians(-90 + i*36); rad = R if i % 2 == 0 else ri
-        pts.append(f'{cx+rad*math.cos(a):.2f} {cy+rad*math.sin(a):.2f}')
-    return 'M' + 'L'.join(pts) + 'Z'
-def gear_d(cx, cy, ro, ri, n=8):
-    pts = []
+def _star_pts(cx, cy, R, ri):
+    pts_out, pts_in = [], []
+    for i in range(5):
+        ao = math.radians(-90 + i * 72)
+        ai = math.radians(-90 + i * 72 + 36)
+        pts_out.append((cx + R * math.cos(ao), cy + R * math.sin(ao)))
+        pts_in.append((cx + ri * math.cos(ai), cy + ri * math.sin(ai)))
+    return pts_out, pts_in
+def star_round(cx, cy, R, ri):
+    """Weich gerundeter 5-zackiger Blattwerk-Stern."""
+    pts_out, pts_in = _star_pts(cx, cy, R, ri)
+    d = []
+    for i in range(5):
+        ox, oy = pts_out[i]
+        ix_prev, iy_prev = pts_in[(i - 1) % 5]
+        ix_next, iy_next = pts_in[i]
+        t = 0.20
+        b1x, b1y = ox + (ix_prev - ox) * t, oy + (iy_prev - oy) * t
+        b2x, b2y = ox + (ix_next - ox) * t, oy + (iy_next - oy) * t
+        v1x, v1y = ix_next + (ox - ix_next) * 0.15, iy_next + (oy - iy_next) * 0.15
+        ox_n, oy_n = pts_out[(i + 1) % 5]
+        v2x, v2y = ix_next + (ox_n - ix_next) * 0.15, iy_next + (oy_n - iy_next) * 0.15
+        d.append(f'M{b1x:.2f} {b1y:.2f}' if i == 0 else f'L{b1x:.2f} {b1y:.2f}')
+        d.append(f'Q{ox:.2f} {oy:.2f} {b2x:.2f} {b2y:.2f}')
+        d.append(f'L{v1x:.2f} {v1y:.2f}')
+        d.append(f'Q{ix_next:.2f} {iy_next:.2f} {v2x:.2f} {v2y:.2f}')
+    d.append('Z')
+    return ''.join(d)
+def gear_round(cx, cy, ro, ri, n=8):
+    """Zahnrad mit weich abgerundeten Zahnspitzen und -füßen."""
+    def xy(ang_deg, rad):
+        a = math.radians(ang_deg)
+        return cx + rad * math.cos(a), cy + rad * math.sin(a)
+    d = []
     for i in range(n):
-        t = i*360/n
-        for ang, rad in [(t-17, ri), (t-10, ro), (t+10, ro), (t+17, ri)]:
-            a = math.radians(ang); pts.append(f'{cx+rad*math.cos(a):.2f} {cy+rad*math.sin(a):.2f}')
-    return 'M' + 'L'.join(pts) + 'Z'
-def rotbadge(a0, a1):
-    """Badge unten rechts mit Drehpfeil (Bogen R=6 um (46,46))."""
-    return (c(46, 46, 11, 'B') + line(arc(46, 46, 6, a0, a1), 'H', 2.4)
-            + p(head(46, 46, 6, a1, a1 < a0), 'none', 'H', 2.4))
-def seitenleiste_links():
-    return (r(8, 12, 48, 40, 6, 'L') + p('M14 12h11v40H14q-6 0-6-6V18q0-6 6-6Z', 'B')
-            + line('M30 22h18m-18 7h14m-14 7h12', 'D', 2.1))
-def seite_drehen():
-    return page() + rotbadge(210, 330)
+        t = i * 360 / n
+        v0 = xy(t - 18, ri)
+        v1 = xy(t - 13, ri)
+        fl_in = xy(t - 11.2, ri + (ro - ri) * 0.45)
+        t_c1 = xy(t - 5.2, ro)
+        t_c2 = xy(t + 5.2, ro)
+        fl_out = xy(t + 11.2, ri + (ro - ri) * 0.45)
+        v2 = xy(t + 13, ri)
+        v3 = xy(t + 18, ri)
+        k_in, k_tip1 = xy(t - 12.2, ri), xy(t - 9.5, ro)
+        k_tip2, k_out = xy(t + 9.5, ro), xy(t + 12.2, ri)
+        if i == 0:
+            d.append(f'M{v0[0]:.2f} {v0[1]:.2f}')
+        d.append(f'L{v1[0]:.2f} {v1[1]:.2f}')
+        d.append(f'Q{k_in[0]:.2f} {k_in[1]:.2f} {fl_in[0]:.2f} {fl_in[1]:.2f}')
+        d.append(f'Q{k_tip1[0]:.2f} {k_tip1[1]:.2f} {t_c1[0]:.2f} {t_c1[1]:.2f}')
+        d.append(f'L{t_c2[0]:.2f} {t_c2[1]:.2f}')
+        d.append(f'Q{k_tip2[0]:.2f} {k_tip2[1]:.2f} {fl_out[0]:.2f} {fl_out[1]:.2f}')
+        d.append(f'Q{k_out[0]:.2f} {k_out[1]:.2f} {v2[0]:.2f} {v2[1]:.2f}')
+        d.append(f'L{v3[0]:.2f} {v3[1]:.2f}')
+    d.append('Z')
+    return ''.join(d)
+def curved_arrow(cx, cy, r_in, r_out, a_start, a_end, cw=True, head_extra=3.8, head_ang=22):
+    """Kräftiger geschwungener Bandpfeil von a_start nach a_end."""
+    r_mid = 0.5 * (r_in + r_out)
+    a_shaft = a_end - head_ang if cw else a_end + head_ang
+    def pt(ang, rad):
+        t = math.radians(ang)
+        return cx + rad * math.cos(t), cy + rad * math.sin(t)
+    s_out, e_out = pt(a_start, r_out), pt(a_shaft, r_out)
+    wing_out, tip = pt(a_shaft, r_out + head_extra), pt(a_end, r_mid)
+    wing_in, e_in = pt(a_shaft, r_in - head_extra), pt(a_shaft, r_in)
+    s_in = pt(a_start, r_in)
+    sweep_out, sweep_in = (1, 0) if cw else (0, 1)
+    large = 1 if abs(a_shaft - a_start) > 180 else 0
+    return (f'M{s_out[0]:.2f} {s_out[1]:.2f}'
+            f'A{r_out} {r_out} 0 {large} {sweep_out} {e_out[0]:.2f} {e_out[1]:.2f}'
+            f'L{wing_out[0]:.2f} {wing_out[1]:.2f}L{tip[0]:.2f} {tip[1]:.2f}'
+            f'L{wing_in[0]:.2f} {wing_in[1]:.2f}L{e_in[0]:.2f} {e_in[1]:.2f}'
+            f'A{r_in} {r_in} 0 {large} {sweep_in} {s_in[0]:.2f} {s_in[1]:.2f}Z')
+def doc_page(x=13, y=8, w=36, h=48, fold=10, rr=4, f='L'):
+    """Dokumentseite mit sauberem Eselsohr-Falz."""
+    rx, by, fx, fy = x + w, y + h, x + w - fold, y + fold
+    main = f'M{x+rr} {y}H{fx}L{rx} {fy}V{by-rr}q0 {rr}-{rr} {rr}H{x+rr}q-{rr} 0-{rr}-{rr}V{y+rr}q0-{rr} {rr}-{rr}Z'
+    return p(main, f) + p(f'M{fx} {y}V{fy}H{rx}Z', 'B', 'I', 2)
 
-# ── Beta: neue Motive (B01…B04) ─────────────────────────────────────────────
+# ── Beta: neue Motive (B01…B05) ─────────────────────────────────────────────
 # Gleiche Regeln wie Normal: Handgeräte (Lineal) +38° gekippt, Bedienelemente gerade.
 def bicon(k):
     if k == 'lineal':
-        ticks = ''.join(line(f'M28 {y}h{w}', 'D', 1.8) for y, w in [(13, 6), (21, 9), (29, 6), (37, 9), (45, 6), (53, 9)])
-        return tilt(r(22, 5, 20, 54, 3, 'B') + line('M25 10v44', 'H', 2) + ticks)
+        ticks = ''.join(line(f'M{43-w} {y}h{w}', 'I', 2.0)
+                        for y, w in [(12, 6.5), (19, 4.2), (26, 6.5), (33, 4.2), (40, 6.5), (47, 4.2), (54, 6.5)])
+        return tilt(r(21, 5, 22, 54, 3.5, 'B')
+                    + p('M33 5h6.5a3.5 3.5 0 0 1 3.5 3.5v47a3.5 3.5 0 0 1-3.5 3.5H33Z', 'L', 'I', 2.0)
+                    + ticks + c(27, 11.5, 2.3, 'L', 'I', 1.8) + line('M25 19v29', 'H', 2.1)
+                    + r(21, 5, 22, 54, 3.5, 'none', 'I', 2.6))
     if k == 'zoom-ansicht':
-        return (line('M42 42 53 53', 'I', 12) + line('M42 42 53 53', 'B', 7)
-                + c(27, 27, 17, 'L') + line('M27 18v18m-9-9h18', 'I', 3)
-                + line('M18 25q1-5 6-6', 'H', 2))
+        return (p('m37 40 4-4 14 14q3 3 0 6t-6 0Z', 'B')
+                + p('m39 42 4-4 3.5 3.5-4 4Z', 'A', 'I', 1.7)
+                + line('M47 47l5.5 5.5', 'H', 2.0)
+                + c(26, 26, 18.5, 'B') + line(arc(26, 26, 15.3, 200, 245), 'H', 2.0)
+                + c(26, 26, 12.5, 'L', 'I', 2.2)
+                + line('M26 19.5v13m-6.5-6.5h13', 'I', 3.0))
     if k == 'stoppuhr':
-        return (r(27, 5, 10, 6, 2.5, 'A') + r(29, 9, 6, 8, 1, 'B')
-                + c(32, 36, 18, 'B') + c(32, 36, 12, 'L', 'I', 2)
-                + line('M32 36V27', 'I', 2.6) + line('M32 36l5 4', 'I', 2.6)
-                + c(32, 36, 2, 'I', 'none')
-                + group(r(46, 14, 7, 5, 1.5, 'M'), 'rotate(45 32 36)'))
+        return (group(r(29.5, 11.8, 5, 6.5, 1.5, 'M', 'I', 2.2), 'rotate(44 32 36)')
+                + r(29, 11, 6, 7, 1, 'M', 'I', 2.2) + r(25, 5.5, 14, 5.5, 2.5, 'A', 'I', 2.4)
+                + c(32, 36, 19, 'B') + line(arc(32, 36, 16, 200, 245), 'H', 2.0)
+                + c(32, 36, 13.5, 'L', 'I', 2.2)
+                + p('M32 36V24A12 12 0 0 1 43.2 31.8Z', 'A', 'none')
+                + line('M32 24.2v2.4m0 18.8v2.4M20.2 36h2.4m18.8 0h2.4', 'D', 2.0)
+                + line('M32 36V27', 'I', 2.7) + line('M32 36l6 3.5', 'I', 2.6)
+                + c(32, 36, 2.5, 'B', 'I', 1.8))
     if k == 'scrollrichtung-vertikal':
-        return (r(10, 6, 44, 52, 7, 'L') + line('M32 18v28', 'I', 3)
-                + p('M32 8l8 10H24Z', 'B', 'I', 2) + p('M32 56l8-10H24Z', 'B', 'I', 2))
+        return (r(10, 11, 36, 45, 5, 'M') + r(15, 7, 38, 49, 5, 'L')
+                + r(46.2, 21, 3.2, 21, 1.6, 'M', 'none')
+                + p('M32.5 13l9 9.5H36v18h5.5L32.5 50l-9-9.5H29v-18h-5.5Z', 'B', 'I', 2.4)
+                + line('M31.3 25v13', 'H', 1.9))
     if k == 'scrollrichtung-horizontal':
-        return (r(6, 10, 52, 44, 7, 'L') + line('M18 32h28', 'I', 3)
-                + p('M8 32l10-8v16Z', 'B', 'I', 2) + p('M56 32l-10-8v16Z', 'B', 'I', 2))
+        return (r(11, 10, 45, 36, 5, 'M') + r(7, 15, 49, 38, 5, 'L')
+                + r(21, 46.2, 21, 3.2, 1.6, 'M', 'none')
+                + p('M13 32.5l9.5-9V29h18v-5.5L50 32.5l-9.5 9V36h-18v5.5Z', 'B', 'I', 2.4)
+                + line('M25 31.3h13', 'H', 1.9))
     if k == 'seitenleiste-links':
-        return seitenleiste_links()
+        return (r(7, 12, 50, 40, 5.5, 'L')
+                + p('M12.5 12H26v40H12.5q-5.5 0-5.5-5.5V17.5q0-5.5 5.5-5.5Z', 'B')
+                + r(10.5, 19, 12, 5, 2, 'A', 'I', 1.6) + line('M11.5 29.5h10m-10 7h8', 'H', 2.2)
+                + r(31, 19, 15, 5, 1.8, 'M', 'none') + line('M31 30h20m-20 7h14', 'D', 2.2))
     if k == 'seitenleiste-rechts':
-        return group(seitenleiste_links(), 'translate(64 0) scale(-1 1)')
-    if k == 'seite-drehen' or k == 'seite-nach-rechts-drehen':
-        return seite_drehen()
+        return (r(7, 12, 50, 40, 5.5, 'L')
+                + p('M38 12h13.5q5.5 0 5.5 5.5v29q0 5.5-5.5 5.5H38Z', 'B')
+                + r(41.5, 19, 12, 5, 2, 'A', 'I', 1.6) + line('M42.5 29.5h10m-10 7h8', 'H', 2.2)
+                + r(13, 19, 15, 5, 1.8, 'M', 'none') + line('M13 30h20m-20 7h14', 'D', 2.2))
+    if k == 'seite-drehen':
+        cx, cy, R, a_end = 45, 45, 6.4, 338
+        t = math.radians(a_end)
+        px, py = cx + R*math.cos(t), cy + R*math.sin(t)
+        tx, ty, nx, ny = -math.sin(t), math.cos(t), math.cos(t), math.sin(t)
+        tip = (px + tx*4.0, py + ty*4.0)
+        w1 = (px - tx*1.8 + nx*3.8, py - ty*1.8 + ny*3.8)
+        w2 = (px - tx*1.8 - nx*3.8, py - ty*1.8 - ny*3.8)
+        tri = f'M{tip[0]:.2f} {tip[1]:.2f}L{w1[0]:.2f} {w1[1]:.2f}L{w2[0]:.2f} {w2[1]:.2f}Z'
+        return (r(9, 23, 42, 31, 4, 'M') + doc_page(14, 8, 32, 43, 9, 4, 'L')
+                + line('M19 23h13m-13 6h10m-10 6h7', 'D', 2.0)
+                + c(45, 45, 12, 'B') + line(arc(cx, cy, R, 125, a_end), 'H', 2.6) + p(tri, 'H', 'none'))
+    if k == 'seite-nach-rechts-drehen':
+        return (doc_page(10, 15, 30, 41, 8.5, 4, 'L') + line('M15 29.5h13m-13 6.5h17m-17 6.5h11', 'D', 2.1)
+                + p(curved_arrow(34, 30, 15.5, 21.5, -108, 6, cw=True), 'B', 'I', 2.4)
+                + line(arc(34, 30, 18.5, -94, -36), 'H', 1.8))
     if k == 'seite-nach-links-drehen':
-        return page() + rotbadge(330, 210)
+        return (doc_page(24, 15, 30, 41, 8.5, 4, 'L') + line('M29 29.5h13m-13 6.5h17m-17 6.5h11', 'D', 2.1)
+                + p(curved_arrow(30, 30, 15.5, 21.5, -72, -186, cw=False), 'B', 'I', 2.4)
+                + line(arc(30, 30, 18.5, -144, -86), 'H', 1.8))
     if k == 'seite-180-drehen':
-        return page() + rotbadge(180, 360)
+        return (r(21, 16, 22, 32, 3.5, 'L')
+                + p('M21 19.5q0-3.5 3.5-3.5h15q3.5 0 3.5 3.5v3.5H21Z', 'A', 'I', 2.0)
+                + line('M25.5 29.5h13m-13 6h9m-9 6h11', 'D', 2.0)
+                + p(curved_arrow(32, 32, 18.5, 24, -88, 16, cw=True, head_extra=3.4, head_ang=24), 'B', 'I', 2.3)
+                + p(curved_arrow(32, 32, 18.5, 24, 92, 196, cw=True, head_extra=3.4, head_ang=24), 'B', 'I', 2.3))
     if k == 'gehe-zu-seite':
-        return (page() + line('M20 23h12m-12 7h14', 'D')
-                + c(46, 46, 11, 'B') + line('M40 46h11', 'H', 2.6) + p('M46 40l6 6-6 6', 'none', 'H', 2.6))
+        return (r(50, 22, 6, 12, 2.2, 'A', 'I', 1.8) + doc_page(22, 9, 31, 46, 9, 4, 'L')
+                + line('M28 24h13m-13 7h18m-18 7h14m-14 7h10', 'D', 2.1)
+                + p('M7 28.5h13.5v-6L33 33 20.5 43.5v-6H7Z', 'B', 'I', 2.5) + line('M10 31.6h9', 'H', 1.8))
     if k == 'seite-leeren':
-        return (page() + line('M20 22h22m-22 7h16', 'D', 2)
-                + group(r(24, 38, 24, 12, 3, 'A'), 'rotate(-30 36 44)'))
+        eraser = group(r(30, 26, 18, 25, 4, 'B', 'I', 2.4)
+                       + p('M30 40h18v7q0 4-4 4H34q-4 0-4-4Z', 'L', 'I', 2.0)
+                       + line('M33.5 30v7', 'H', 2.0) + line('M33.5 44.5h11', 'M', 1.8), 'rotate(42 39 38.5)')
+        return (doc_page(13, 8, 35, 47, 10, 4, 'L') + line('M18 22h15', 'D', 2.1)
+                + p('M18 29h16', 'none', 'M', 2.1, 'stroke-dasharray="3.5 3.5"')
+                + line('M18 37q5 2.5 9.5 0', 'M', 2.0) + eraser)
     if k == 'gliederung':
-        return (page()
-                + c(20, 22, 2.6, 'A', 'I', 1.8) + line('M27 22h14', 'D', 2.2)
-                + c(25, 31, 2.2, 'B', 'I', 1.6) + line('M31 31h10', 'D', 2.2)
-                + c(25, 40, 2.2, 'B', 'I', 1.6) + line('M31 40h10', 'D', 2.2)
-                + c(20, 49, 2.6, 'A', 'I', 1.8) + line('M27 49h8', 'D', 2.2))
+        return (r(12, 11, 35, 46, 4, 'M') + doc_page(16, 7, 36, 48, 10, 4, 'L')
+                + r(21, 16, 6.5, 6.5, 2, 'B', 'I', 1.8) + line('M31 19.2h9', 'I', 2.6)
+                + line('M24.2 22.5v17M24.2 29h4.5M24.2 37h4.5', 'M', 2.0)
+                + c(31, 29, 2.3, 'A', 'I', 1.6) + line('M36 29h10', 'D', 2.1)
+                + c(31, 37, 2.3, 'A', 'I', 1.6) + line('M36 37h8', 'D', 2.1)
+                + r(21, 43.5, 6.5, 6.5, 2, 'B', 'I', 1.8) + line('M31 46.7h14', 'I', 2.6))
     if k == 'favorit':
-        return p(star_d(32, 34, 25, 11), 'B') + line('M24 28l-2 3', 'H', 2.2)
+        cx, cy, R, ri = 32, 33, 24.5, 12.2
+        sd = star_round(cx, cy, R, ri)
+        po, pi = _star_pts(cx, cy, R, ri)
+        shade = (f'M{cx} {cy}L{po[0][0]:.2f} {po[0][1]:.2f}L{pi[0][0]:.2f} {pi[0][1]:.2f}'
+                 f'L{po[1][0]:.2f} {po[1][1]:.2f}L{pi[1][0]:.2f} {pi[1][1]:.2f}'
+                 f'L{po[2][0]:.2f} {po[2][1]:.2f}L{pi[2][0]:.2f} {pi[2][1]:.2f}Z')
+        return (p(sd, 'B') + p(shade, 'M', 'none') + p(sd, 'none', 'I', 2.6)
+                + p(star_round(32, 33.5, 8.6, 4.3), 'A', 'I', 1.8) + line('M20 26l6-1.5', 'H', 2.2))
     if k == 'lesezeichen':
-        return p('M19 8h26q3 0 3 3v46l-16-11-16 11V11q0-3 3-3Z', 'B') + line('M25 15v26', 'H', 2.4)
+        return (r(11, 13, 39, 41, 4.5, 'L') + line('M17 24h9m-9 7h9m-9 7h8', 'D', 2.2)
+                + p('M27.5 13v-3q0-3 3-3h4v6Z', 'M')
+                + p('M30.5 10q0-3 3-3h10q2.5 0 2.5 2.5V56.5l-7.75-6-7.75 6Z', 'B')
+                + line('M34 15v23', 'H', 2.1) + p(star_round(38.5, 27, 5.8, 2.9), 'A', 'I', 1.7))
     if k == 'vorlage-wechseln':
-        return (p('M32 9C18 9 8 19 8 32c0 11 8 19 18 19 4 0 5-2 4-5s1-5 5-5h5c6 0 10-4 10-9C50 22 42 9 32 9Z', 'L')
-                + c(21, 25, 4, 'B', 'I', 1.8) + c(32, 19, 4, 'A', 'I', 1.8) + c(43, 25, 4, 'M', 'I', 1.8)
-                + c(20, 39, 4, 'D', 'I', 1.8) + c(38, 44, 3.6, 'none', 'I', 1.8))
+        pal_path = 'M33 17C19 17 10 26 10 37c0 9.5 7 17 16 17 3.8 0 5-2 4.2-4.8-.7-2.6 1.2-4.7 4.8-4.7h5c7 0 13-5 13-11.5C53 23 44 17 33 17Z'
+        return (group(r(11, 9, 31, 36, 4, 'L') + line('M16 16.5h14', 'D', 2.1), 'rotate(-7 26 27)')
+                + p(pal_path, 'B') + line('M16 28q3-5 10-7', 'H', 2.2)
+                + c(20.5, 31, 3.8, 'L', 'I', 1.9) + c(30, 24.5, 3.8, 'A', 'I', 1.9)
+                + c(41.5, 28, 3.8, 'H', 'I', 1.9) + c(19.5, 42, 3.8, 'A', 'I', 1.9)
+                + c(39, 44, 3.8, 'L', 'I', 2.0))
     if k == 'bestimmte-objekte-loeschen':
-        return (p('M8 8h32v32H8Z', 'none', 'I', 2.2, 'stroke-dasharray="4 4"')
-                + r(13, 13, 14, 14, 3, 'B') + c(33, 29, 5.5, 'A')
-                + c(46, 46, 11, 'B') + line('M40 46h12', 'H', 3))
+        return (r(9, 9, 36, 36, 4, 'L', 'none')
+                + p('M13 9h28q4 0 4 4v28q0 4-4 4H13q-4 0-4-4V13q0-4 4-4Z', 'none', 'I', 2.4, 'stroke-dasharray="4.2 4.5"')
+                + ''.join(r(x-3.1, y-3.1, 6.2, 6.2, 1.5, 'B', 'I', 2.2) for x, y in [(9, 9), (45, 9), (9, 45)])
+                + r(15, 16, 13.5, 13.5, 3, 'B') + line('M18 19.5h5', 'H', 1.8)
+                + c(33, 28.5, 7, 'A', 'I', 2.2) + c(45.5, 45.5, 11.5, 'B') + line('M39.5 45.5h12', 'H', 3.2))
     if k == 'einstellungen':
-        return p(gear_d(32, 32, 26, 20), 'B') + c(32, 32, 9, 'L', 'I', 2.2)
+        return (p(gear_round(32, 32, 25.5, 19.5, 8), 'B') + line(arc(32, 32, 16.5, 205, 245), 'H', 2.1)
+                + c(32, 32, 14, 'L', 'I', 2.1) + c(32, 32, 8.2, 'B', 'I', 2.0) + c(32, 32, 3.5, 'L', 'I', 1.8))
     if k == 'alles-exportieren':
-        return (p('M9 34h14l4 6h14l4-6h14v14q0 4-4 4H13q-4 0-4-4Z', 'B')
-                + line('M32 40V8', 'I', 3) + p('M23 17l9-9 9 9', 'none', 'I', 3)
-                + line('M14 46h36', 'H', 2))
+        return (r(16, 13, 32, 22, 3.5, 'M') + r(12, 18, 40, 24, 3.5, 'L')
+                + p('M9 35h13l3 5h14l3-5h13v14q0 5-5 5H14q-5 0-5-5Z', 'B')
+                + p('M9.5 45h45v4q0 5-5 5H14.5q-5 0-5-5Z', 'M', 'I', 2.0) + line('M14 40h6', 'H', 2.0)
+                + p('M32 7l10.5 11H36v16h-8V18h-6.5Z', 'B', 'I', 2.5) + line('M30.5 21v9', 'H', 1.8))
     if k == 'seite-exportieren':
-        return (page() + c(46, 46, 11, 'B') + line('M46 52V41', 'H', 2.8)
-                + p('M40.5 46.5 46 41l5.5 5.5', 'none', 'H', 2.8))
+        return (doc_page(11, 9, 33, 46, 9.5, 4, 'L') + line('M16 24h14m-14 7h12m-12 7h7', 'D', 2.1)
+                + p('M28 42Q33 25 46 21l-3-5.5 14 2.5-6 13-3-5.5Q38 29 34 44Z', 'B', 'I', 2.4)
+                + line('M34 35q4-7 11-10', 'H', 1.8))
     if k == 'pdf':
-        return (page() + r(12, 27, 40, 16, 3, 'B', 'I', 2.2)
-                + line('M17 39V31h4.2a3.6 3.6 0 0 1 0 7.2H17', 'L', 2.4)
-                + line('M25 31h4a4 4 0 0 1 0 8h-4Z', 'L', 2.4)
-                + line('M36 39V31h8M36 35h6', 'L', 2.4))
+        return (r(11, 11, 36, 46, 4, 'M') + doc_page(16, 7, 36, 48, 10, 4, 'L')
+                + line('M22 18h12m-12 30h19', 'D', 2.1) + p('M11.2 40.5L16 44.5V41Z', 'M', 'I', 2.0)
+                + r(10, 26, 44, 15, 3, 'B', 'I', 2.4) + line('M14 29h6', 'H', 1.6)
+                + p('M18 38V30h3.4a2.1 2.1 0 0 1 0 4.2H18', 'none', 'L', 2.4)
+                + p('M27.3 30h2.8a4 4 0 0 1 0 8h-2.8Z', 'none', 'L', 2.4)
+                + line('M38.8 38V30h6.2M38.8 34h4.8', 'L', 2.4))
     if k == 'bezier-kurve-anpassen':
-        return (line('M12 46C22 14 42 50 52 18', 'I', 3.4)
-                + line('M12 46L22 14M52 18L42 50', 'D', 1.6)
-                + c(22, 14, 3, 'A', 'I', 1.6) + c(42, 50, 3, 'A', 'I', 1.6)
-                + c(12, 46, 4.6, 'B') + c(52, 18, 4.6, 'B'))
+        arch = 'M11 47C12 24 21 19 32 19C43 19 52 24 53 47'
+        return (p(arch, 'none', 'I', 6.4) + p(arch, 'none', 'B', 2.8) + line('M12 19h40', 'D', 2.4)
+                + r(7, 43, 8.5, 8.5, 2, 'L', 'I', 2.4) + r(48.5, 43, 8.5, 8.5, 2, 'L', 'I', 2.4)
+                + r(27.5, 14.5, 9, 9, 2.2, 'L', 'I', 2.4)
+                + c(11, 19, 4.4, 'A', 'I', 2.2) + c(53, 19, 4.4, 'A', 'I', 2.2))
     if k == 'dicken':
-        return (p('M12 16h40', 'none', 'B', 9)
-                + p('M12 32h40', 'none', 'B', 5, 'stroke-opacity="0.55"')
-                + p('M12 48h40', 'none', 'B', 2.4, 'stroke-opacity="0.25"'))
+        return (line('M11 15q10.5-4.5 21 0t21 0', 'I', 3.4)
+                + p('M11 29q10.5-4.5 21 0t21 0', 'none', 'I', 7.6) + p('M11 29q10.5-4.5 21 0t21 0', 'none', 'M', 3.0)
+                + p('M11 46q10.5-4.5 21 0t21 0', 'none', 'I', 13.0) + p('M11 46q10.5-4.5 21 0t21 0', 'none', 'B', 7.8)
+                + line('M15 43.0q6.5-2.1 11.5-0.4', 'H', 1.8))
     raise KeyError(k)
 
 # ── Gruppentabellen: (Gruppe, [(slug, Anzeigename, Palette, Stern-Code)]) ───
