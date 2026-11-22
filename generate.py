@@ -451,6 +451,14 @@ def bicon(k):
     if k == 'verschieben':
         body = 'M32 6.5l10 10.5H36v11h11v-6L57.5 32 47 42v-6H36v11h6L32 57.5 22 47h6V36H17v6L6.5 32 17 22v6h11V17h-6Z'
         return p(body, 'B', 'I', 2.6) + c(32, 32, 5.8, 'A', 'I', 2.3)
+    if k == 'einklappen-pfeile':
+        top = p('M32 28L43.2 15H36.5V0H27.5V15H20.8Z', 'B', 'I', 2.6) + line('M30.1 4.8v8.0', 'H', 1.9)
+        bot = p('M32 36L43.2 49H36.5V64H27.5V49H20.8Z', 'B', 'I', 2.6) + line('M30.1 51.2v8.0', 'H', 1.9)
+        return group(top + bot, 'rotate(45 32 32)')
+    if k == 'ausklappen-pfeile':
+        top = p('M32 -2.2L43.2 11.8H36.5V26.8H27.5V11.8H20.8Z', 'B', 'I', 2.6) + line('M30.1 14v8.0', 'H', 1.9)
+        bot = p('M32 66.2L43.2 52.2H36.5V37.2H27.5V52.2H20.8Z', 'B', 'I', 2.6) + line('M30.1 42v8.0', 'H', 1.9)
+        return group(top + bot, 'rotate(45 32 32)')
     if k == 'einklappen':
         return (r(9, 13.5, 46, 21.5, 5, 'L')
                 + p('M9 18.5q0-5 5-5h36q5 0 5 5v7.5H9Z', 'B')
@@ -485,7 +493,7 @@ GROUPS = [
 ]
 BETA_GROUPS = [
  ('Bearbeiten', [('duplizieren','Duplizieren','fern','1'),('verschieben','Verschieben','fern','1')]),
- ('Ansicht', [('einklappen','Einklappen','fern','1'),('ausklappen','Ausklappen','fern','1')]),
+ ('Ansicht', [('einklappen-pfeile','Einklappen (Pfeile)','fern','1'),('ausklappen-pfeile','Ausklappen (Pfeile)','fern','1'),('einklappen','Einklappen','fern','1'),('ausklappen','Ausklappen','fern','1')]),
 ]
 
 AREAS = {
