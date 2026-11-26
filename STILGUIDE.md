@@ -2,7 +2,7 @@
 
 **Auftrag an den nächsten Agenten:** Erweitere diese iPad-Notizwerkzeuge durch geskriptete Vektorgeometrie, nicht durch generative Bilder, Emoji, Icon-Fonts oder nachgezeichnete Screenshots. Alle Icons sind freigestellte Piktogramme. Sie sind keine quadratischen App-Logos mit Hintergrundplatte. Die quadratische Fläche ist nur das Koordinatensystem.
 
-**Zwei Bereiche:** `Normal/` führt die freigegebenen Motive (Gruppen G01–G16), `Beta/` alles Neue
+**Zwei Bereiche:** `Normal/` führt die freigegebenen Motive (Gruppen G01–G17), `Beta/` alles Neue
 (Gruppen B01–…). Neue Motive werden **immer** in `Beta/` angelegt und nur auf ausdrückliche
 Anweisung des Owners nach `Normal/` übernommen. Welche Varianten ein Motiv bekommt, sagt sein
 **Stern-Code**: `*1` grün in mehreren Grüntönen, `*2` schwarz + weiß, `*3` farbenfroh, `*S`
@@ -29,10 +29,13 @@ Sonderfarbe (rot), Kombinationen wie `*12`. Regeln, Codes und Freigabe-Ablauf st
 | honey | #624D2D | #EAC365 | #FFF0BC | #CC9845 | #FFFAE3 | #F39C71 | #876936 |
 | sea | #28555C | #63BCB6 | #D1EEEB | #418F94 | #F3FFFB | #F4C775 | #346D74 |
 | ember | #743D34 | #EE876A | #FFDFB9 | #C46552 | #FFF5D8 | #FFCF62 | #94503E |
+| pin | #743D34 | #D94742 | #FFDFB9 | #B83C38 | #FFF5D8 | #FFCF62 | #94503E |
 | rot\* | #6B1F22 | #DE4A4A | #FFDFDA | #B03A3A | #FFF5F3 | #F2C57C | #8A2E2E |
 
 \* `rot` ist eine Sonderpalette außerhalb der Serienfarben, reserviert für den Stern-Code `*S`
 (destruktive Aktionen wie Löschen). Nie für reguläre Motive verwenden.
+
+Die Palette `pin` ist für die ausdrücklich rot gewünschte Stecknadel (`*23`) vorgesehen; sie ist eine reguläre Farbvariante und nicht die destruktive Sondervariante `*S`.
 
 `F` bezeichnet ein Detail **auf gefülltem Körper**: im Farbsatz Konturtinte, in Mono ausgespart (z. B. Stickeraugen). In der Luminanzmaske sind I/B/M/D deckend, L/H/A/F ausgespart. Neue Motive immer in Mono prüfen: Benachbarte Flächen dürfen nicht zu einem unlesbaren Block verschmelzen.
 
@@ -49,7 +52,8 @@ Sonderfarbe (rot), Kombinationen wie `*12`. Regeln, Codes und Freigabe-Ablauf st
 | G07 | App-Navigation | \*2 | schwarz, weiss |
 | G08–G11 | Ehemals Beta: Bearbeiten, Ebenen, Umwandeln, Objekte & Aufnahme | meist \*1 | gruen; `loeschen` trägt \*S → rot |
 | G12–G16 | Ehemals Beta: Ansicht & Werkzeuge, Seiten, Organisation, Einstellungen & Export, Zeichnen | meist \*1; Lineal, Zoom, Stoppuhr \*23; Einstellungen, PDF \*12; Seite leeren \*S → rot | gruen bzw. Farbe/Schwarz/Weiß |
-| B01–B02 | Beta: Bearbeiten (`duplizieren`, `verschieben`), Ansicht (`einklappen-pfeile`, `ausklappen-pfeile`, `einklappen`, `ausklappen`) | \*1 | gruen |
+| G17 | Übernommene Beta-Motive: Duplizieren, Verschieben, Einklappen und Ausklappen | \*1 | gruen |
+| B01–B03 | Neue Beta-Motive: Bearbeiten & Verlauf, Text, Einfügen & Aufnahme | \*1, \*2, \*12 oder \*23 | laut Stern-Code |
 
 Die Codes sind in `generate.py` je Motiv hinterlegt und erzeugen die Exportliste automatisch
 (Reihenfolge: farbe, gruen, rot, schwarz, weiss). Bedeutung der Codes: AGENTS.md §3.

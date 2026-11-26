@@ -11,7 +11,7 @@ der Stilguide für das Aussehen.
 
 | Ordner | Inhalt | Status |
 |---|---|---|
-| `Normal/` | freigegebene Motive, Gruppen **G01–G16** (`g0X-slug-variante.*`) | abgenommen; die App nutzt `Normal/Blattwerk.xcassets` |
+| `Normal/` | freigegebene Motive, Gruppen **G01–G17** (`g0X-slug-variante.*`) | abgenommen; die App nutzt `Normal/Blattwerk.xcassets` |
 | `Beta/`   | neue Motive, Gruppen **B01–…** (`b0X-slug-variante.*`) | in Arbeit, **nicht freigegeben** |
 
 In jedem Bereich liegen, vom Skript erzeugt: `SVG/<Gruppe>/`, `PNG/{32,64,96,256}/<Gruppe>/`,
