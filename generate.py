@@ -2,8 +2,8 @@
 """Blattwerk · reproduzierbarer SVG/PNG/Asset-Export für `Normal/` und `Beta/`.
 
 Aufruf:  python generate.py             beide Bereiche neu erzeugen
-         python generate.py normal      nur Normal/ (G01…G16)
-         python generate.py beta        nur Beta/   (B01…B02)
+         python generate.py normal      nur Normal/ (G01…)
+         python generate.py beta        nur Beta/   (B01…)
 
 Regeln:  AGENTS.md    → Stern-Codes (*1 *2 *3 *S), Beta-Policy, Freigabe
          STILGUIDE.md → Geometrie, Paletten, Abnahme
@@ -47,6 +47,8 @@ PAL = {
  'honey':   ('#624d2d', '#eac365', '#fff0bc', '#cc9845', '#fffae3', '#f39c71', '#876936'),
  'sea':     ('#28555c', '#63bcb6', '#d1eeeb', '#418f94', '#f3fffb', '#f4c775', '#346d74'),
  'ember':   ('#743d34', '#ee876a', '#ffdfb9', '#c46552', '#fff5d8', '#ffcf62', '#94503e'),
+ # Rotbetonte Serienpalette für die ausdrücklich rot gewünschte Stecknadel (*23).
+ 'pin':     ('#743d34', '#d94742', '#ffdfb9', '#b83c38', '#fff5d8', '#ffcf62', '#94503e'),
  # Sonderpalette, nur für *S (destruktive Aktionen wie Löschen). Nie für reguläre Motive.
  'rot':     ('#6b1f22', '#de4a4a', '#ffdfda', '#b03a3a', '#fff5f3', '#f2c57c', '#8a2e2e'),
 }
@@ -441,9 +443,10 @@ def icon(k):
                 + line('M15 43.0q6.5-2.1 11.5-0.4', 'H', 1.8))
     raise KeyError(k)
 
-# ── Beta: neue Motive (B01…B02) ─────────────────────────────────────────────
+# ── Freigegebene ehemalige Beta-Motive (G17) ─────────────────────────────
 # Gleiche Regeln wie Normal: Handgeräte +38° gekippt, Bedienelemente gerade.
-def bicon(k):
+def promoted_icon(k):
+    """Ehemalige Beta-Motive, unverändert nach G17 übernommen."""
     if k == 'duplizieren':
         return (r(8.5, 8.5, 31, 31, 4.5, 'L') + line('M14 14h10', 'H', 2.0)
                 + r(24.5, 24.5, 31, 31, 4.5, 'B')
@@ -472,6 +475,81 @@ def bicon(k):
                 + p('M21.5 44.5L32 55l10.5-10.5-3.8-3.8-6.7 6.7-6.7-6.7Z', 'B', 'I', 2.4))
     raise KeyError(k)
 
+# ── Neue, noch nicht freigegebene Beta-Motive ──────────────────────────────
+def bicon(k):
+    if k == 'bild-zuschneiden':
+        # Zwei ineinander verschränkte Zuschnittwinkel mit kleiner Landschaft.
+        return (r(20, 20, 27, 27, 1, 'L', 'none')
+                + c(39, 27, 3, 'A', 'none')
+                + p('M21 43l8-10 6 6 4-4 7 8Z', 'B', 'none')
+                + line('M16 9v33q0 6 6 6h33M9 16h33q6 0 6 6v33', 'I', 5)
+                + line('M16 10v31M10 16h31', 'B', 2))
+    if k == 'tabelle':
+        return (r(8, 10, 48, 44, 4, 'L')
+                + p('M8 14q0-4 4-4h40q4 0 4 4v8H8Z', 'B')
+                + line('M24 22v32M40 22v32M8 33h48M8 43.5h48', 'I', 2)
+                + line('M14 16h14', 'H', 2))
+    if k in ('rueckgaengig', 'vorgaengig'):
+        a = line('M11 27h22c12 0 20 7 20 19M11 27l10-10M11 27l10 10', 'I', 2.8)
+        return a if k == 'rueckgaengig' else group(a, 'translate(64 0) scale(-1 1)')
+    if k == 'schriftart':
+        # Kontrastreiches typografisches Aa: großes A und kleineres a mit Punze.
+        return (group(p('M7 51 21 14q1-3 3-3h3l15 40h-7l-3.5-10H19l-3.5 10Z', 'B')
+                      + p('M21.5 34h9l-4.5-13Z', 'L', 'I', 1.8)
+                      + line('M9 51h9M33 51h10', 'I', 2.6)
+                      + line('M15 38 23 17', 'H', 1.8), 'translate(1 0) scale(.82 1)')
+                + group(p('M51 32q-3-3-7-3-8 0-8 11t8 11q4 0 7-3v3h5V30h-5Z', 'M')
+                        + p('M46 35q-5 0-5 5t5 5q5 0 5-5t-5-5Z', 'L', 'I', 1.6), 'translate(2 0)'))
+    if k in ('sperren', 'entsperren'):
+        shackle = (line('M20 29V22a12 12 0 0 1 24 0v7', 'I', 5.5)
+                   if k == 'sperren' else line('M20 29V21a12 12 0 0 1 23-4', 'I', 5.5))
+        return (shackle + r(13, 27, 38, 29, 5, 'B')
+                + line('M19 32h13', 'H', 2) + c(32, 39, 3.2, 'I', 'none')
+                + line('M32 41v6', 'I', 3))
+    if k in ('text-links', 'text-mittig', 'text-rechts'):
+        coords = {'text-links': [(10,54),(10,40),(10,54),(10,34)],
+                  'text-mittig': [(10,54),(17,47),(10,54),(20,44)],
+                  'text-rechts': [(10,54),(24,54),(10,54),(30,54)]}[k]
+        return ''.join(line(f'M{x} {y}H{end}', 'I' if i % 2 == 0 else 'M', 3.3)
+                       for i, ((x,end), y) in enumerate(zip(coords, (16,26,36,46))))
+    if k == 'textformat':
+        # B als gefüllter Umriss, I als schlanke, geneigte Antiqua mit Serifen.
+        return (p('M10 12h14q11 0 11 10 0 6-5 8 7 2 7 10 0 12-13 12H10Z', 'B')
+                + p('M18 19v8h6q4 0 4-4t-4-4ZM18 34v11h6q5 0 5-5.5T24 34Z', 'L', 'none')
+                + line('M46 13h12M40 51h12M52 13 46 51', 'I', 2.4))
+    if k == 'textzeilenabstand':
+        return (line('M29 15h26M29 26h19M29 37h26M29 48h19', 'M', 3.2)
+                + line('M15 12v40M9 18l6-6 6 6M9 46l6 6 6-6', 'I', 2.7))
+    if k == 'stecknadel':
+        return tilt(line('M32 37v21', 'I', 2.6)
+                    + p('M22 9h20l-2 5-3 3v12l6 6v4H21v-4l6-6V17l-3-3Z', 'B')
+                    + line('M27 12h10M30 19v8', 'H', 2), 35)
+    if k == 'bild':
+        return (r(8, 13, 48, 38, 4, 'L') + c(43, 23, 4, 'A', 'I', 1.8)
+                + p('M10 46l13-16 10 11 6-6 15 11v4H10Z', 'B', 'I', 2)
+                + line('M14 19h11', 'H', 2))
+    if k == 'datei':
+        return doc_page(14, 8, 36, 48, 11) + line('M21 29h22M21 36h22M21 43h14', 'M', 2.3)
+    if k == 'ki-bild-playground':
+        return (r(8, 14, 48, 37, 4, 'L')
+                + p('M10 47l12-15 9 10 6-6 9 11Z', 'B', 'I', 2)
+                + p('M42 8q1.5 7 8 8.5-6.5 1.5-8 8.5-1.5-7-8-8.5Q40.5 15 42 8Z', 'A', 'I', 2)
+                + line('M53 26v7M49.5 29.5h7', 'M', 2))
+    if k == 'dokument-scannen':
+        return (doc_page(20, 12, 25, 40, 7, 3)
+                + line('M25 27h14M25 33h14M25 39h9', 'M', 2)
+                + line('M8 23v-8q0-5 5-5h5M46 10h5q5 0 5 5v8M8 41v8q0 5 5 5h5M46 54h5q5 0 5-5v-8', 'I', 3)
+                + line('M8 32h48', 'B', 2.8))
+    if k == 'kamera':
+        return (p('M10 22h9l4-7h18l4 7h9q3 0 3 4v24q0 4-4 4H11q-4 0-4-4V26q0-4 3-4Z', 'B')
+                + c(32, 37, 12, 'L') + c(32, 37, 7, 'M', 'I', 2)
+                + line('M13 27h6', 'H', 2.5) + c(49, 27, 2, 'A', 'I', 1.5))
+    if k == 'importieren':
+        return (p('M9 36v13q0 5 5 5h36q5 0 5-5V36H43l-4 6H25l-4-6Z', 'B')
+                + line('M32 8v25M23 24l9 9 9-9', 'I', 3.5)
+                + line('M15 48h12', 'H', 2))
+    raise KeyError(k)
+
 # ── Gruppentabellen: (Gruppe, [(slug, Anzeigename, Palette, Stern-Code)]) ───
 GROUPS = [
  ('Werkzeugleiste', [('stift','Stift','fern','23'),('freihandlasso','Freihandlasso','fern','23'),('boxlasso','Boxlasso','sea','23'),('radiergummi','Radiergummi','coral','23'),('textfeld','Textfeld','fern','23'),('formen','Formen','iris','23'),('sticker','Objekte · Sticker','honey','23'),('bilder','Bilder','cobalt','23'),('notizzettel','Notizzettel','honey','23'),('laserpointer','Laserpointer','ember','23')]),
@@ -490,10 +568,12 @@ GROUPS = [
  ('Organisation', [('favorit','Favorit','fern','1'),('lesezeichen','Lesezeichen','fern','1'),('vorlage-wechseln','Vorlage wechseln (Farbpalette)','fern','1'),('bestimmte-objekte-loeschen','Bestimmte Objekte löschen','fern','1')]),
  ('Einstellungen & Export', [('einstellungen','Einstellungen (Zahnrad)','fern','12'),('alles-exportieren','Alles exportieren','fern','1'),('seite-exportieren','Seite exportieren','fern','1'),('pdf','PDF','fern','12')]),
  ('Zeichnen', [('bezier-kurve-anpassen','Bezier Kurve anpassen','fern','1'),('bezier-punkte-verschieben','Bezier Punkte verschieben','fern','1'),('dicken','Dicken','fern','1')]),
+ ('Freigegebene Beta-Motive', [('duplizieren','Duplizieren','fern','1'),('verschieben','Verschieben','fern','1'),('einklappen-pfeile','Einklappen (Pfeile)','fern','1'),('ausklappen-pfeile','Ausklappen (Pfeile)','fern','1'),('einklappen','Einklappen','fern','1'),('ausklappen','Ausklappen','fern','1')]),
 ]
 BETA_GROUPS = [
- ('Bearbeiten', [('duplizieren','Duplizieren','fern','1'),('verschieben','Verschieben','fern','1')]),
- ('Ansicht', [('einklappen-pfeile','Einklappen (Pfeile)','fern','1'),('ausklappen-pfeile','Ausklappen (Pfeile)','fern','1'),('einklappen','Einklappen','fern','1'),('ausklappen','Ausklappen','fern','1')]),
+ ('Bearbeiten & Verlauf', [('bild-zuschneiden','Bild zuschneiden (neu)','fern','1'),('tabelle','Tabelle','fern','1'),('rueckgaengig','Rückgängig (dünn)','fern','2'),('vorgaengig','Vorgängig (dünn)','fern','2'),('sperren','Sperren','fern','1'),('entsperren','Entsperren','fern','1')]),
+ ('Text', [('schriftart','Schriftart','fern','1'),('text-links','Text linksbündig','fern','12'),('text-mittig','Text zentriert','fern','12'),('text-rechts','Text rechtsbündig','fern','12'),('textformat','Textformat','fern','1'),('textzeilenabstand','Textzeilenabstand','fern','1')]),
+ ('Einfügen & Aufnahme', [('stecknadel','Stecknadel','pin','23'),('bild','Bild','fern','1'),('datei','Datei','fern','1'),('ki-bild-playground','KI Bild Playground','fern','1'),('dokument-scannen','Dokument scannen','fern','1'),('kamera','Kamera','fern','1'),('importieren','Importieren','fern','1')]),
 ]
 
 AREAS = {
@@ -622,7 +702,9 @@ def main(which='beide'):
                     print(f'  Hinweis: {k} nutzt *S, Palette ist aber {palette!r}')
                 icons = {}
                 for v in vs:
-                    icons[v] = build(area, t, glyph, k, label, palette, v)
+                    # G17 bewahrt das freigegebene Beta-Duplikat neben dem älteren G08-Slug.
+                    mot = promoted_icon if area == 'Normal' and t == 'G17' else glyph
+                    icons[v] = build(area, t, mot, k, label, palette, v)
                     keys.add(f'{t.lower()}-{k}-{v}'); n_exp += 1
                 out.append(dict(label=label, id=k, palette=palette, code=code, variants=vs, icons=icons))
             data.append(dict(name=name, items=out)); rows.append((t, data[-1]))

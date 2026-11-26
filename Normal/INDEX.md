@@ -3,7 +3,7 @@
 > **Freigegeben.** Alle abgenommenen Motive. Neues kommt zuerst nach `Beta/`.
 > Regeln: [`AGENTS.md`](../AGENTS.md) · Stil: [`STILGUIDE.md`](../STILGUIDE.md)
 
-71 Motive · 119 Exporte · Gruppen G01–G16
+77 Motive · 125 Exporte · Gruppen G01–G17
 
 ## G01 · Werkzeugleiste
 
@@ -155,5 +155,16 @@
 | 1 | `bezier-kurve-anpassen` | Bezier Kurve anpassen | fern | `*1` | `gruen` |
 | 2 | `bezier-punkte-verschieben` | Bezier Punkte verschieben | fern | `*1` | `gruen` |
 | 3 | `dicken` | Dicken | fern | `*1` | `gruen` |
+
+## G17 · Freigegebene Beta-Motive
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `duplizieren` | Duplizieren | fern | `*1` | `gruen` |
+| 2 | `verschieben` | Verschieben | fern | `*1` | `gruen` |
+| 3 | `einklappen-pfeile` | Einklappen (Pfeile) | fern | `*1` | `gruen` |
+| 4 | `ausklappen-pfeile` | Ausklappen (Pfeile) | fern | `*1` | `gruen` |
+| 5 | `einklappen` | Einklappen | fern | `*1` | `gruen` |
+| 6 | `ausklappen` | Ausklappen | fern | `*1` | `gruen` |
 
 Dateien je Export: `SVG/GXX/Gxx-slug-variante.svg`, `PNG/{32,64,96,256}/GXX/….png` und ein Imageset in `Blattwerk.xcassets/`.
