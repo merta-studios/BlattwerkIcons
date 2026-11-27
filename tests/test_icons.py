@@ -24,6 +24,7 @@ class IconsTest(unittest.TestCase):
             'sticker-hinzufuegen': '12', 'verschieben': '12', 'blitz': '32',
             'textfeld-stil': '1', 'rueckgaengig-dick': '2', 'vorgaengig-dick': '2',
             'dicken': '2', 'zoom-fenster': '12', 'zoom-handschrift': '12',
+            'linienanfang': '12', 'linienende': '12',
         }
         actual = {slug: code for _, items in generate.BETA_GROUPS for slug, _, _, code in items}
         self.assertEqual(actual, expected)
@@ -46,6 +47,12 @@ class IconsTest(unittest.TestCase):
         self.assertIn('verschieben', {item[0] for item in generate.GROUPS[16][1]})
         self.assertEqual(generate.bicon('dicken'), generate.icon('dicken'))
         self.assertEqual(generate.varianten(actual['dicken']), ['schwarz', 'weiss'])
+
+    def test_linie_zeigt_ihren_ausgewaehlten_endpunkt(self):
+        start = (ROOT / 'Beta/SVG/B10/b10-linienanfang-gruen.svg').read_text()
+        end = (ROOT / 'Beta/SVG/B10/b10-linienende-gruen.svg').read_text()
+        self.assertIn('M19 25L7 32L19 39Z', start)
+        self.assertIn('M45 25L57 32L45 39Z', end)
 
     def test_zoom_handschrift_fadet_am_offenen_ende_aus(self):
         svg = (ROOT / 'Beta/SVG/B09/b09-zoom-handschrift-gruen.svg').read_text()
