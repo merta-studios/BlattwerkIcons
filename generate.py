@@ -599,6 +599,19 @@ def bicon(k):
                   + line('M32 33q3-9 6 0t5 0 4-7 5 0', 'D', 3.0)
                   + line('M32 42q4-3 8 0t8 0', 'M', 2.2))
         return page + connector + window
+    if k in ('linienanfang', 'linienende'):
+        # Spiegelbildliche Linien-Endpunktwahl: Startpunkt mit Laufrichtung bzw.
+        # Laufrichtung mit markiertem Endpunkt.
+        if k == 'linienanfang':
+            shaft = 'M18 32H49'
+            arrow = 'M19 25L7 32L19 39Z'
+            marker = c(51, 32, 4.4, 'A', 'I', 2.0)
+        else:
+            shaft = 'M17 32H46'
+            arrow = 'M45 25L57 32L45 39Z'
+            marker = c(13, 32, 4.4, 'A', 'I', 2.0)
+        return (p(shaft, 'none', 'I', 6.0) + p(shaft, 'none', 'B', 2.8)
+                + p(arrow, 'B', 'I', 2.6) + marker)
     if k == 'zoom-handschrift':
         # Schlichter Kasten mit einem angefangenen, geschwungenen L.
         # Viele kurze, anschließende Teilstrecken erzeugen ein weiches Ausfaden.
@@ -694,6 +707,7 @@ BETA_GROUPS = [
  ('Stiftdicke', [('dicken','Dicken','fern','2')]),
  ('Zoom-Ansicht', [('zoom-fenster','Zoom-Fenster','fern','12')]),
  ('Zoom-Ansicht · Handschrift', [('zoom-handschrift','Zoom-Handschrift','fern','12')]),
+ ('Linienanfang & Linienende', [('linienanfang','Anfang der Linie','fern','12'),('linienende','Ende der Linie','fern','12')]),
 ]
 
 AREAS = {
