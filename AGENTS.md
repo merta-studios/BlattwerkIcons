@@ -11,7 +11,7 @@ der Stilguide für das Aussehen.
 
 | Ordner | Inhalt | Status |
 |---|---|---|
-| `Normal/` | freigegebene Motive, Gruppen **G01–G17** (`g0X-slug-variante.*`) | abgenommen; die App nutzt `Normal/Blattwerk.xcassets` |
+| `Normal/` | freigegebene Motive, Gruppen **G01–G18** (`g0X-slug-variante.*`) | abgenommen; die App nutzt `Normal/Blattwerk.xcassets` |
 | `Beta/`   | neue Motive, Gruppen **B01–…** (`b0X-slug-variante.*`) | in Arbeit, **nicht freigegeben** |
 
 In jedem Bereich liegen, vom Skript erzeugt: `SVG/<Gruppe>/`, `PNG/{32,64,96,256}/<Gruppe>/`,
@@ -53,6 +53,7 @@ Kombinationen — die Exportreihenfolge ist fest (`farbe, gruen, rot, schwarz, w
 
 - `*12` = grün + schwarz + weiss
 - `*23` = farbe + schwarz + weiss (Standard der Werkzeugleiste G01/G03/G04)
+- `*32` = farbe + schwarz + weiss (farbige Variante plus beide Monochrom-Versionen)
 - `*13` = grün + farbe
 - `*123` = farbe + grün + schwarz + weiss
 - `*S2` = rot + schwarz + weiss (falls für ein destruktives Icon Monovarianten gewünscht werden)

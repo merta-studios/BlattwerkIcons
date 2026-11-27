@@ -5,7 +5,7 @@ skriptbasiert erzeugt (kein generatives Bildmaterial), in zwei Bereichen organis
 
 | Ordner | Inhalt |
 |---|---|
-| [`Normal/`](Normal/) | freigegebene Motive, Gruppen G01–G17 — der Stand für die App |
+| [`Normal/`](Normal/) | freigegebene Motive, Gruppen G01–G18 — der Stand für die App |
 | [`Beta/`](Beta/) | neue Motive in Arbeit, Gruppen B01–… — **nicht freigegeben** |
 | [`STILGUIDE.md`](STILGUIDE.md) | visuelle Grammatik: Raster, Konturen, Paletten, Abnahme |
 | [`AGENTS.md`](AGENTS.md) | Arbeitsregeln: Stern-Codes (`*1 *2 *3 *S`), Beta-Policy, Freigabe-Ablauf |
@@ -34,5 +34,6 @@ skriptbasiert erzeugt (kein generatives Bildmaterial), in zwei Bereichen organis
 ## Tests
 
 Nach dem Erzeugen überprüft `python -m unittest discover -s tests` die Stern-Codes,
-Beta-Exporte, Transparenz und Monochrom-Masken. Die sechs übernommenen früheren
-Beta-Motive liegen in `Normal/G17`; das ältere Duplizieren in G08 bleibt erhalten.
+Beta-Exporte, Transparenz und Monochrom-Masken. Sechs zuvor freigegebene Beta-Motive liegen in
+`Normal/G17`; die 19 zuletzt übernommenen Beta-Motive in `Normal/G18`. Bestehende Duplikate wie
+„Duplizieren“ und „Bild zuschneiden“ bleiben erhalten.
