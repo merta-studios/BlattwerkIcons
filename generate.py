@@ -581,6 +581,24 @@ def bicon(k):
             + r(34, 7, 26, 26, 0, 'none', 'I', 2.8) + '</g>')
         return (clipped_square
                 + p(organic, 'none', 'I', 6.8) + p(organic, 'none', 'B', 3.2))
+    if k == 'dicken':
+        # Exakt dieselbe Geometrie wie das freigegebene grüne Normal-Icon;
+        # *2 liefert daraus die monochromen Varianten.
+        return icon('dicken')
+    if k == 'zoom-fenster':
+        # Kleine ganze Seite mit markierter Textstelle; darüber ein separates
+        # Vergrößerungsfenster, in dem die Handschrift deutlich größer erscheint.
+        page = (doc_page(8, 7, 36, 50, 9, 4, 'L')
+                + line('M14 17h13m-13 5h12m-12 5h10', 'D', 1.8)
+                + line('M15 38q3-4 5 0t5 0', 'M', 1.8)
+                + r(14, 32, 13, 12, 1.5, 'none', 'A', 1.8))
+        connector = line('M27 33l5 2', 'I', 2.2)
+        window = (r(29, 22, 31, 31, 4, 'M')
+                  + r(26, 19, 31, 31, 4, 'B')
+                  + r(29, 22, 25, 25, 2, 'L', 'I', 1.8)
+                  + line('M32 33q3-9 6 0t5 0 4-7 5 0', 'D', 3.0)
+                  + line('M32 42q4-3 8 0t8 0', 'M', 2.2))
+        return page + connector + window
     if k == 'textfeld-stil':
         # Beispieltext plus drei kleine Regler für Schrift- und Texteffekte.
         page = r(9, 11, 46, 43, 5, 'M') + r(12, 8, 42, 46, 4, 'L')
@@ -640,6 +658,8 @@ BETA_GROUPS = [
  ('Blitz', [('blitz','Blitz','honey','32')]),
  ('Textfeld-Stil', [('textfeld-stil','Textfeld Stil','fern','1')]),
  ('Verlauf · kräftigere Variante', [('rueckgaengig-dick','Rückgängig (dick)','fern','2'),('vorgaengig-dick','Vorgängig (dick)','fern','2')]),
+ ('Stiftdicke', [('dicken','Dicken','fern','2')]),
+ ('Zoom-Ansicht', [('zoom-fenster','Zoom-Fenster','fern','12')]),
 ]
 
 AREAS = {

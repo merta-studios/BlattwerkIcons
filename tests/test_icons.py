@@ -22,6 +22,7 @@ class IconsTest(unittest.TestCase):
             'kurven-und-linien': '12', 'objekt-hinzufuegen': '12',
             'sticker-hinzufuegen': '12', 'verschieben': '12', 'blitz': '32',
             'textfeld-stil': '1', 'rueckgaengig-dick': '2', 'vorgaengig-dick': '2',
+            'dicken': '2', 'zoom-fenster': '12',
         }
         actual = {slug: code for _, items in generate.BETA_GROUPS for slug, _, _, code in items}
         self.assertEqual(actual, expected)
@@ -42,6 +43,8 @@ class IconsTest(unittest.TestCase):
         self.assertIn('duplizieren', {item[0] for item in generate.GROUPS[7][1]})
         self.assertIn('bild-zuschneiden', {item[0] for item in generate.GROUPS[7][1]})
         self.assertIn('verschieben', {item[0] for item in generate.GROUPS[16][1]})
+        self.assertEqual(generate.bicon('dicken'), generate.icon('dicken'))
+        self.assertEqual(generate.varianten(actual['dicken']), ['schwarz', 'weiss'])
 
     def test_dickere_verlaufspfeile_sind_sichtbar_staerker(self):
         for slug in ('rueckgaengig', 'vorgaengig'):

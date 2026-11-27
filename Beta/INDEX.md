@@ -4,7 +4,7 @@
 > Übernahme nach `Normal/` **nur auf ausdrückliche Anweisung** des Owners.
 > Regeln: [`AGENTS.md`](../AGENTS.md) · Stil: [`STILGUIDE.md`](../STILGUIDE.md)
 
-11 Motive · 28 Exporte · Gruppen B01–B06
+13 Motive · 33 Exporte · Gruppen B01–B08
 
 ## B01 · Tabelle
 
@@ -46,5 +46,17 @@
 |---|---|---|---|---|---|
 | 1 | `rueckgaengig-dick` | Rückgängig (dick) | fern | `*2` | `schwarz` `weiss` |
 | 2 | `vorgaengig-dick` | Vorgängig (dick) | fern | `*2` | `schwarz` `weiss` |
+
+## B07 · Stiftdicke
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `dicken` | Dicken | fern | `*2` | `schwarz` `weiss` |
+
+## B08 · Zoom-Ansicht
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `zoom-fenster` | Zoom-Fenster | fern | `*12` | `gruen` `schwarz` `weiss` |
 
 Dateien je Export: `SVG/BXX/Bxx-slug-variante.svg`, `PNG/{32,64,96,256}/BXX/….png` und ein Imageset in `Blattwerk-Beta.xcassets/`.

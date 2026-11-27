@@ -54,7 +54,7 @@ Die Palette `pin` ist für die ausdrücklich rot gewünschte Stecknadel (`*23`) 
 | G12–G16 | Ehemals Beta: Ansicht & Werkzeuge, Seiten, Organisation, Einstellungen & Export, Zeichnen | meist \*1; Lineal, Zoom, Stoppuhr \*23; Einstellungen, PDF \*12; Seite leeren \*S → rot | gruen bzw. Farbe/Schwarz/Weiß |
 | G17 | Früher übernommene Beta-Motive: Duplizieren, Verschieben, Einklappen und Ausklappen | \*1 | gruen |
 | G18 | Übernommene Beta-Motive: Bearbeiten, Tabelle, Text, Einfügen und Aufnahme | \*1, \*2, \*12 oder \*23 | laut Stern-Code |
-| B01–B06 | Neue Beta-Motive: Tabellen-Mono, Kurven/Linien, Hinzufügen/Verschieben, Blitz, Textfeld-Stil, kräftigere Verlaufspfeile | \*1, \*2, \*12 oder \*32 | laut Stern-Code |
+| B01–B08 | Neue Beta-Motive: Tabellen-Mono, Kurven/Linien, Hinzufügen/Verschieben, Blitz, Textfeld-Stil, kräftigere Verlaufspfeile, Stiftdicke-Mono, Zoom-Fenster | \*1, \*2, \*12 oder \*32 | laut Stern-Code |
 
 Die Codes sind in `generate.py` je Motiv hinterlegt und erzeugen die Exportliste automatisch
 (Reihenfolge: farbe, gruen, rot, schwarz, weiss). Bedeutung der Codes: AGENTS.md §3.
