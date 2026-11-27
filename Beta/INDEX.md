@@ -4,7 +4,7 @@
 > Übernahme nach `Normal/` **nur auf ausdrückliche Anweisung** des Owners.
 > Regeln: [`AGENTS.md`](../AGENTS.md) · Stil: [`STILGUIDE.md`](../STILGUIDE.md)
 
-13 Motive · 33 Exporte · Gruppen B01–B08
+14 Motive · 36 Exporte · Gruppen B01–B09
 
 ## B01 · Tabelle
 
@@ -58,5 +58,11 @@
 | # | Slug | Anzeigename | Palette | Code | Exporte |
 |---|---|---|---|---|---|
 | 1 | `zoom-fenster` | Zoom-Fenster | fern | `*12` | `gruen` `schwarz` `weiss` |
+
+## B09 · Zoom-Ansicht · Handschrift
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `zoom-handschrift` | Zoom-Handschrift | fern | `*12` | `gruen` `schwarz` `weiss` |
 
 Dateien je Export: `SVG/BXX/Bxx-slug-variante.svg`, `PNG/{32,64,96,256}/BXX/….png` und ein Imageset in `Blattwerk-Beta.xcassets/`.
