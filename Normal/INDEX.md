@@ -3,7 +3,7 @@
 > **Freigegeben.** Alle abgenommenen Motive. Neues kommt zuerst nach `Beta/`.
 > Regeln: [`AGENTS.md`](../AGENTS.md) · Stil: [`STILGUIDE.md`](../STILGUIDE.md)
 
-77 Motive · 125 Exporte · Gruppen G01–G17
+96 Motive · 154 Exporte · Gruppen G01–G18
 
 ## G01 · Werkzeugleiste
 
@@ -166,5 +166,29 @@
 | 4 | `ausklappen-pfeile` | Ausklappen (Pfeile) | fern | `*1` | `gruen` |
 | 5 | `einklappen` | Einklappen | fern | `*1` | `gruen` |
 | 6 | `ausklappen` | Ausklappen | fern | `*1` | `gruen` |
+
+## G18 · Übernommene Beta-Motive
+
+| # | Slug | Anzeigename | Palette | Code | Exporte |
+|---|---|---|---|---|---|
+| 1 | `bild-zuschneiden` | Bild zuschneiden (neu) | fern | `*1` | `gruen` |
+| 2 | `tabelle` | Tabelle | fern | `*1` | `gruen` |
+| 3 | `rueckgaengig` | Rückgängig (dünn) | fern | `*2` | `schwarz` `weiss` |
+| 4 | `vorgaengig` | Vorgängig (dünn) | fern | `*2` | `schwarz` `weiss` |
+| 5 | `sperren` | Sperren | fern | `*1` | `gruen` |
+| 6 | `entsperren` | Entsperren | fern | `*1` | `gruen` |
+| 7 | `schriftart` | Schriftart | fern | `*1` | `gruen` |
+| 8 | `text-links` | Text linksbündig | fern | `*12` | `gruen` `schwarz` `weiss` |
+| 9 | `text-mittig` | Text zentriert | fern | `*12` | `gruen` `schwarz` `weiss` |
+| 10 | `text-rechts` | Text rechtsbündig | fern | `*12` | `gruen` `schwarz` `weiss` |
+| 11 | `textformat` | Textformat | fern | `*1` | `gruen` |
+| 12 | `textzeilenabstand` | Textzeilenabstand | fern | `*1` | `gruen` |
+| 13 | `stecknadel` | Stecknadel | pin | `*23` | `farbe` `schwarz` `weiss` |
+| 14 | `bild` | Bild | fern | `*1` | `gruen` |
+| 15 | `datei` | Datei | fern | `*1` | `gruen` |
+| 16 | `ki-bild-playground` | KI Bild Playground | fern | `*1` | `gruen` |
+| 17 | `dokument-scannen` | Dokument scannen | fern | `*1` | `gruen` |
+| 18 | `kamera` | Kamera | fern | `*1` | `gruen` |
+| 19 | `importieren` | Importieren | fern | `*1` | `gruen` |
 
 Dateien je Export: `SVG/GXX/Gxx-slug-variante.svg`, `PNG/{32,64,96,256}/GXX/….png` und ein Imageset in `Blattwerk.xcassets/`.

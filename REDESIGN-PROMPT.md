@@ -1,5 +1,9 @@
 # Brief: Redesign der Beta-Icons auf exakten Blattwerk-Stil
 
+> **Historisches Briefing.** Die damaligen Beta-Motive wurden inzwischen auf Owner-Anweisung nach
+> `Normal/G18` übernommen. Der aktuelle Beta-Stand und die neuen Aufträge sind in `Beta/INDEX.md`
+> und `generate.py` maßgeblich; die folgenden alten Mengen- und Prozessangaben sind überholt.
+
 > Prompt an einen neuen Agenten. Arbeitsrepo: `merta-studios/BlattwerkIcons`
 > (Branch laut Session-Notiz). Lies zusätzlich `AGENTS.md`, `STILGUIDE.md`,
 > `Normal/AGENTS.md`, `Beta/AGENTS.md` — dieser Brief ersetzt nichts davon, er setzt es voraus.

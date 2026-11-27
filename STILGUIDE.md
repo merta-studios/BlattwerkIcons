@@ -2,7 +2,7 @@
 
 **Auftrag an den nächsten Agenten:** Erweitere diese iPad-Notizwerkzeuge durch geskriptete Vektorgeometrie, nicht durch generative Bilder, Emoji, Icon-Fonts oder nachgezeichnete Screenshots. Alle Icons sind freigestellte Piktogramme. Sie sind keine quadratischen App-Logos mit Hintergrundplatte. Die quadratische Fläche ist nur das Koordinatensystem.
 
-**Zwei Bereiche:** `Normal/` führt die freigegebenen Motive (Gruppen G01–G17), `Beta/` alles Neue
+**Zwei Bereiche:** `Normal/` führt die freigegebenen Motive (Gruppen G01–G18), `Beta/` alles Neue
 (Gruppen B01–…). Neue Motive werden **immer** in `Beta/` angelegt und nur auf ausdrückliche
 Anweisung des Owners nach `Normal/` übernommen. Welche Varianten ein Motiv bekommt, sagt sein
 **Stern-Code**: `*1` grün in mehreren Grüntönen, `*2` schwarz + weiß, `*3` farbenfroh, `*S`
@@ -52,8 +52,9 @@ Die Palette `pin` ist für die ausdrücklich rot gewünschte Stecknadel (`*23`) 
 | G07 | App-Navigation | \*2 | schwarz, weiss |
 | G08–G11 | Ehemals Beta: Bearbeiten, Ebenen, Umwandeln, Objekte & Aufnahme | meist \*1 | gruen; `loeschen` trägt \*S → rot |
 | G12–G16 | Ehemals Beta: Ansicht & Werkzeuge, Seiten, Organisation, Einstellungen & Export, Zeichnen | meist \*1; Lineal, Zoom, Stoppuhr \*23; Einstellungen, PDF \*12; Seite leeren \*S → rot | gruen bzw. Farbe/Schwarz/Weiß |
-| G17 | Übernommene Beta-Motive: Duplizieren, Verschieben, Einklappen und Ausklappen | \*1 | gruen |
-| B01–B03 | Neue Beta-Motive: Bearbeiten & Verlauf, Text, Einfügen & Aufnahme | \*1, \*2, \*12 oder \*23 | laut Stern-Code |
+| G17 | Früher übernommene Beta-Motive: Duplizieren, Verschieben, Einklappen und Ausklappen | \*1 | gruen |
+| G18 | Übernommene Beta-Motive: Bearbeiten, Tabelle, Text, Einfügen und Aufnahme | \*1, \*2, \*12 oder \*23 | laut Stern-Code |
+| B01–B06 | Neue Beta-Motive: Tabellen-Mono, Kurven/Linien, Hinzufügen/Verschieben, Blitz, Textfeld-Stil, kräftigere Verlaufspfeile | \*1, \*2, \*12 oder \*32 | laut Stern-Code |
 
 Die Codes sind in `generate.py` je Motiv hinterlegt und erzeugen die Exportliste automatisch
 (Reihenfolge: farbe, gruen, rot, schwarz, weiss). Bedeutung der Codes: AGENTS.md §3.

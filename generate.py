@@ -548,6 +548,68 @@ def bicon(k):
         return (p('M9 36v13q0 5 5 5h36q5 0 5-5V36H43l-4 6H25l-4-6Z', 'B')
                 + line('M32 8v25M23 24l9 9 9-9', 'I', 3.5)
                 + line('M15 48h12', 'H', 2))
+    if k == 'blitz':
+        return (p('M36 5 15 35h14l-3 24 24-34H35Z', 'B', 'I', 2.8)
+                + p('M35 13 22 32h12l-2 15 12-18H32Z', 'A', 'none')
+                + line('M37 11 32 19', 'H', 2.0))
+    if k == 'runde-kurven':
+        # Zwei gegensinnig verlaufende Halbkreisbögen: oben links beginnend,
+        # mit freiem Ende unten rechts. Nur Anfang und Ende sind als Punkte markiert.
+        curve = 'M12 12V19 C12 34 50 19 50 34 C50 49 25 39 25 52 H52'
+        return (p(curve, 'none', 'I', 7.0) + p(curve, 'none', 'B', 3.3)
+                + c(12, 12, 5.2, 'L') + c(52, 52, 5.2, 'A'))
+    if k == 'eckige-linien':
+        # Derselbe Verlauf mit rechtwinkligen Richtungswechseln statt Bögen.
+        angle = 'M12 12V19H50V34H25V52H52'
+        return (p(angle, 'none', 'I', 7.0) + p(angle, 'none', 'B', 3.3)
+                + c(12, 12, 5.2, 'L') + c(52, 52, 5.2, 'A'))
+    if k == 'kurven-und-linien':
+        # Ein einzelner, weich durchgezogener organischer Kreiszug ohne
+        # wellige Mehrfachbögen. Anfang und Ende lassen unten links eine Lücke.
+        organic = ('M13 43 C10 37 11 29 15 23 '
+                   'C20 14 30 10 38 14 C47 17 53 25 51 34 '
+                   'C52 43 44 50 37 50 C32 52 26 54 21 52')
+        # Das kleinere, präzise Quadrat sitzt hinten rechts oben. Es wird an der
+        # organischen Kreisfläche abgeschnitten, bleibt außerhalb als klare Form lesbar.
+        clipped_square = (
+            '<defs><mask id="square-clipped-by-organic-circle" '
+            'maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">'
+            '<rect x="0" y="0" width="64" height="64" fill="white"/>'
+            f'<path d="{organic}Z" fill="black"/>'
+            '</mask></defs>'
+            '<g mask="url(#square-clipped-by-organic-circle)">'
+            + r(34, 7, 26, 26, 0, 'none', 'I', 2.8) + '</g>')
+        return (clipped_square
+                + p(organic, 'none', 'I', 6.8) + p(organic, 'none', 'B', 3.2))
+    if k == 'textfeld-stil':
+        # Beispieltext plus drei kleine Regler für Schrift- und Texteffekte.
+        page = r(9, 11, 46, 43, 5, 'M') + r(12, 8, 42, 46, 4, 'L')
+        letter_a = (p('M15 43 23 18h5l9 25h-6l-2-7h-7l-2 7Z', 'B')
+                    + p('M23 32h8', 'none', 'I', 2.2)
+                    + line('M18 46h17', 'M', 2.2))
+        sliders = (line('M39 22h11M39 32h11M39 42h11', 'I', 2.1)
+                   + c(44, 22, 3.1, 'A', 'I', 1.5)
+                   + c(47, 32, 3.1, 'B', 'I', 1.5)
+                   + c(41.5, 42, 3.1, 'A', 'I', 1.5))
+        return page + letter_a + sliders
+    if k in ('rueckgaengig-dick', 'vorgaengig-dick'):
+        arrow = 'M11 27h22c12 0 20 7 20 19M11 27l10-10M11 27l10 10'
+        bold = p(arrow, 'none', 'I', 6.2) + p(arrow, 'none', 'B', 3.2)
+        return bold if k == 'rueckgaengig-dick' else group(bold, 'translate(64 0) scale(-1 1)')
+    if k == 'objekt-hinzufuegen':
+        return (r(10, 13, 31, 38, 4, 'L') + r(15, 9, 31, 38, 4, 'B')
+                + p('M20 18h17m-17 7h11', 'none', 'H', 2.0)
+                + line('M20 34h14m-14 6h9', 'D', 2.0)
+                + c(47, 46, 11, 'A') + line('M41 46h12m-6-6v12', 'D', 2.8))
+    if k == 'sticker-hinzufuegen':
+        return (p('M11 20q0-7 7-8l24-4q8-1 9 7l3 17q1 4-3 8L40 52q-2 2-6 2l-15 1q-6 0-7-7Z', 'B')
+                + p('M36 54q5-7 4-14 7 2 14-3Z', 'L')
+                + c(24, 27, 2.2, 'F', 'none') + c(38, 25, 2.2, 'F', 'none')
+                + line('M24 34q7 5 13-2', 'F', 2.3) + line('M16 18l7-1', 'H', 1.8)
+                + c(49, 48, 10, 'A') + line('M44 48h10m-5-5v10', 'D', 2.6))
+    if k == 'verschieben':
+        body = 'M32 6.5l10 10.5H36v11h11v-6L57.5 32 47 42v-6H36v11h6L32 57.5 22 47h6V36H17v6L6.5 32 17 22v6h11V17h-6Z'
+        return p(body, 'B', 'I', 2.6) + c(32, 32, 5.8, 'A', 'I', 2.3)
     raise KeyError(k)
 
 # ── Gruppentabellen: (Gruppe, [(slug, Anzeigename, Palette, Stern-Code)]) ───
@@ -569,11 +631,15 @@ GROUPS = [
  ('Einstellungen & Export', [('einstellungen','Einstellungen (Zahnrad)','fern','12'),('alles-exportieren','Alles exportieren','fern','1'),('seite-exportieren','Seite exportieren','fern','1'),('pdf','PDF','fern','12')]),
  ('Zeichnen', [('bezier-kurve-anpassen','Bezier Kurve anpassen','fern','1'),('bezier-punkte-verschieben','Bezier Punkte verschieben','fern','1'),('dicken','Dicken','fern','1')]),
  ('Freigegebene Beta-Motive', [('duplizieren','Duplizieren','fern','1'),('verschieben','Verschieben','fern','1'),('einklappen-pfeile','Einklappen (Pfeile)','fern','1'),('ausklappen-pfeile','Ausklappen (Pfeile)','fern','1'),('einklappen','Einklappen','fern','1'),('ausklappen','Ausklappen','fern','1')]),
+ ('Übernommene Beta-Motive', [('bild-zuschneiden','Bild zuschneiden (neu)','fern','1'),('tabelle','Tabelle','fern','1'),('rueckgaengig','Rückgängig (dünn)','fern','2'),('vorgaengig','Vorgängig (dünn)','fern','2'),('sperren','Sperren','fern','1'),('entsperren','Entsperren','fern','1'),('schriftart','Schriftart','fern','1'),('text-links','Text linksbündig','fern','12'),('text-mittig','Text zentriert','fern','12'),('text-rechts','Text rechtsbündig','fern','12'),('textformat','Textformat','fern','1'),('textzeilenabstand','Textzeilenabstand','fern','1'),('stecknadel','Stecknadel','pin','23'),('bild','Bild','fern','1'),('datei','Datei','fern','1'),('ki-bild-playground','KI Bild Playground','fern','1'),('dokument-scannen','Dokument scannen','fern','1'),('kamera','Kamera','fern','1'),('importieren','Importieren','fern','1')]),
 ]
 BETA_GROUPS = [
- ('Bearbeiten & Verlauf', [('bild-zuschneiden','Bild zuschneiden (neu)','fern','1'),('tabelle','Tabelle','fern','1'),('rueckgaengig','Rückgängig (dünn)','fern','2'),('vorgaengig','Vorgängig (dünn)','fern','2'),('sperren','Sperren','fern','1'),('entsperren','Entsperren','fern','1')]),
- ('Text', [('schriftart','Schriftart','fern','1'),('text-links','Text linksbündig','fern','12'),('text-mittig','Text zentriert','fern','12'),('text-rechts','Text rechtsbündig','fern','12'),('textformat','Textformat','fern','1'),('textzeilenabstand','Textzeilenabstand','fern','1')]),
- ('Einfügen & Aufnahme', [('stecknadel','Stecknadel','pin','23'),('bild','Bild','fern','1'),('datei','Datei','fern','1'),('ki-bild-playground','KI Bild Playground','fern','1'),('dokument-scannen','Dokument scannen','fern','1'),('kamera','Kamera','fern','1'),('importieren','Importieren','fern','1')]),
+ ('Tabelle', [('tabelle','Tabelle · monochrom','fern','2')]),
+ ('Kurven & Linien', [('runde-kurven','Runde Kurven','fern','12'),('eckige-linien','Eckige Linien','fern','12'),('kurven-und-linien','Kurven und Linien','fern','12')]),
+ ('Objekte & Verschieben', [('objekt-hinzufuegen','Objekt hinzufügen','fern','12'),('sticker-hinzufuegen','Sticker hinzufügen','fern','12'),('verschieben','Verschieben','fern','12')]),
+ ('Blitz', [('blitz','Blitz','honey','32')]),
+ ('Textfeld-Stil', [('textfeld-stil','Textfeld Stil','fern','1')]),
+ ('Verlauf · kräftigere Variante', [('rueckgaengig-dick','Rückgängig (dick)','fern','2'),('vorgaengig-dick','Vorgängig (dick)','fern','2')]),
 ]
 
 AREAS = {
@@ -702,8 +768,9 @@ def main(which='beide'):
                     print(f'  Hinweis: {k} nutzt *S, Palette ist aber {palette!r}')
                 icons = {}
                 for v in vs:
-                    # G17 bewahrt das freigegebene Beta-Duplikat neben dem älteren G08-Slug.
-                    mot = promoted_icon if area == 'Normal' and t == 'G17' else glyph
+                    # G17 behält die eigens freigegebenen Geometrien; G18 übernimmt die bisherigen Beta-Geometrien.
+                    mot = (promoted_icon if area == 'Normal' and t == 'G17'
+                           else bicon if area == 'Normal' and t == 'G18' else glyph)
                     icons[v] = build(area, t, mot, k, label, palette, v)
                     keys.add(f'{t.lower()}-{k}-{v}'); n_exp += 1
                 out.append(dict(label=label, id=k, palette=palette, code=code, variants=vs, icons=icons))
