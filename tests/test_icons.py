@@ -3,6 +3,7 @@
 Nach `python generate.py` ausführen: python -m unittest discover -s tests
 """
 import json
+import re
 from pathlib import Path
 import unittest
 
@@ -22,7 +23,7 @@ class IconsTest(unittest.TestCase):
             'kurven-und-linien': '12', 'objekt-hinzufuegen': '12',
             'sticker-hinzufuegen': '12', 'verschieben': '12', 'blitz': '32',
             'textfeld-stil': '1', 'rueckgaengig-dick': '2', 'vorgaengig-dick': '2',
-            'dicken': '2', 'zoom-fenster': '12',
+            'dicken': '2', 'zoom-fenster': '12', 'zoom-handschrift': '12',
         }
         actual = {slug: code for _, items in generate.BETA_GROUPS for slug, _, _, code in items}
         self.assertEqual(actual, expected)
@@ -45,6 +46,14 @@ class IconsTest(unittest.TestCase):
         self.assertIn('verschieben', {item[0] for item in generate.GROUPS[16][1]})
         self.assertEqual(generate.bicon('dicken'), generate.icon('dicken'))
         self.assertEqual(generate.varianten(actual['dicken']), ['schwarz', 'weiss'])
+
+    def test_zoom_handschrift_fadet_am_offenen_ende_aus(self):
+        svg = (ROOT / 'Beta/SVG/B09/b09-zoom-handschrift-gruen.svg').read_text()
+        opacities = [float(value) for value in re.findall(r'stroke-opacity="([0-9.]+)"', svg)]
+        self.assertGreaterEqual(len(opacities), 12)
+        self.assertEqual(opacities[0], 1.0)
+        self.assertTrue(all(a > b for a, b in zip(opacities, opacities[1:])))
+        self.assertLessEqual(opacities[-1], 0.12)
 
     def test_dickere_verlaufspfeile_sind_sichtbar_staerker(self):
         for slug in ('rueckgaengig', 'vorgaengig'):

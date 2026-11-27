@@ -599,6 +599,39 @@ def bicon(k):
                   + line('M32 33q3-9 6 0t5 0 4-7 5 0', 'D', 3.0)
                   + line('M32 42q4-3 8 0t8 0', 'M', 2.2))
         return page + connector + window
+    if k == 'zoom-handschrift':
+        # Schlichter Kasten mit einem angefangenen, geschwungenen L.
+        # Viele kurze, anschließende Teilstrecken erzeugen ein weiches Ausfaden.
+        frame = r(7, 8, 50, 44, 4, 'L', 'I', 2.8)
+        strokes = [
+            ('M18 34 C14 28 16 20 22 19', 1.00, 2.8),
+            ('M22 19 C28 18 30 24 26 29', 0.94, 2.8),
+            ('M26 29 C23 33 18 34 20 38', 0.88, 2.8),
+            ('M20 38 C22 42 28 40 32 34', 0.82, 2.8),
+            ('M32 34 C36 27 34 20 37 17', 0.76, 2.8),
+            ('M37 17 C40 14 43 18 41 24', 0.70, 2.8),
+            ('M41 24 C39 31 34 37 35 40', 0.64, 2.8),
+            ('M35 40 C36 43 41 39 44 36', 0.54, 2.7),
+            ('M44 36 C46 34 48 33 49 32', 0.44, 2.6),
+            ('M49 32 Q49.6 31.5 50 31.5', 0.38, 2.4),
+            ('M50 31.5 Q50.5 31 50.8 31', 0.33, 2.2),
+            ('M50.8 31 Q51.1 30.5 51.3 30.5', 0.28, 2.0),
+            ('M51.3 30.5 Q51.6 30 51.8 30', 0.23, 1.8),
+            ('M51.8 30 Q52 29.8 52.2 29.8', 0.18, 1.6),
+            ('M52.2 29.8 Q52.4 29.6 52.5 29.6', 0.14, 1.4),
+            ('M52.5 29.6 Q52.6 29.4 52.7 29.4', 0.10, 1.2),
+        ]
+        ink_parts = []
+        for index, (d, opacity, width) in enumerate(strokes):
+            cap = 'round' if index == 0 else 'butt'
+            ink_parts.append(p(d, 'none', 'D', width,
+                               f'stroke-opacity="{opacity}" stroke-linecap="{cap}"'))
+        ink = ''.join(ink_parts)
+        handle = (line('M54 48l7 7', 'I', 5.0)
+                  + line('M54 48l7 7', 'B', 2.4))
+        lens = (c(49, 43, 9, 'A', 'I', 2.6)
+                + line('M45 43h8m-4-4v8', 'D', 2.8))
+        return frame + ink + handle + lens
     if k == 'textfeld-stil':
         # Beispieltext plus drei kleine Regler für Schrift- und Texteffekte.
         page = r(9, 11, 46, 43, 5, 'M') + r(12, 8, 42, 46, 4, 'L')
@@ -660,6 +693,7 @@ BETA_GROUPS = [
  ('Verlauf · kräftigere Variante', [('rueckgaengig-dick','Rückgängig (dick)','fern','2'),('vorgaengig-dick','Vorgängig (dick)','fern','2')]),
  ('Stiftdicke', [('dicken','Dicken','fern','2')]),
  ('Zoom-Ansicht', [('zoom-fenster','Zoom-Fenster','fern','12')]),
+ ('Zoom-Ansicht · Handschrift', [('zoom-handschrift','Zoom-Handschrift','fern','12')]),
 ]
 
 AREAS = {
